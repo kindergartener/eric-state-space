@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h1>
+  Tag: #{{ term.name }}
+  ({{ term.pages | length }} post{{ term.pages | length | pluralize }})
+</h1>
+
+<a href="{{ config.base_url | safe }}/tags/">
+  ← Show all tags
+</a>
+
+{{ post_macros::post_list(
+    pages=term.pages,
+    summary_words=config.extra.summary_fallback_words | default(value=60),
+    class="posts",
+    tags_sep=""
+) }}
+
+{% endblock content %}

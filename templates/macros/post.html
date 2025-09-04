@@ -1,0 +1,256 @@
+{% macro date(page, fmt="%Y-%m-%d") -%}
+  {%- if page.date -%}
+    {{ page.date | date(format=fmt) }}
+  {%- endif -%}
+{%- endmacro date %}
+
+{% macro tags_inline(page, sep=", ") -%}
+  {%- if page.taxonomies and page.taxonomies.tags -%}
+    {%- for tag in page.taxonomies.tags | sort | unique(case_sensitive=false) -%}
+      <a class="post-tag" href="{{ get_taxonomy_url(kind='tags', name=tag) | safe }}">#{{ tag }}</a>{% if not loop.last %}{{ sep }}{% endif %}
+    {%- endfor -%}
+  {%- endif -%}
+{%- endmacro tags_inline %}
+
+{# Renders a single post card #}
+{% macro post_card(page, summary_words=60, tags_sep=", ") -%}
+  <article class="post-card">
+    <h2 class="post-title">
+      <a href="{{ page.permalink | safe }}">{{ page.title }}</a>
+    </h2>
+
+    <div class="post-meta">
+      <span class="meta-primary">
+        {{ self::date(page=page) }}
+        : :
+        {% if page.reading_time %}
+          <span class="post-reading-time">{{ page.reading_time }} min read</span>
+        {% endif %}
+      </span>
+
+      {% if page.taxonomies and page.taxonomies.tags %}
+        <span class="meta-sep">: :</span>
+        <span class="meta-tags">{{ self::tags_inline(page=page, sep=tags_sep) }}</span>
+      {% endif %}
+    </div>
+
+    <div class="post-summary-container">
+      <div class="line"></div>
+      <div class="post-summary">
+        {% if page.summary %}
+          {{ page.summary | safe }}
+        {% else %}
+          {{ page.content | striptags | truncate(length=summary_words) }}
+        {% endif %}
+      </div>
+    </div>
+  </article>
+{%- endmacro post_card %}
+
+{# Renders a list of post cards #}
+{% macro post_list(pages, summary_words=60, class="posts", tags_sep=", ") -%}
+  <div class="{{ class }}">
+    {% for page in pages %}
+      {{ self::post_card(page=page, summary_words=summary_words, tags_sep=tags_sep) }}
+    {% endfor %}
+  </div>
+{%- endmacro post_list %}
+
+{# Header with title + metadata #}
+{% macro header(
+  page,
+  date_format="%Y-%m-%d",
+  show_date=true,
+  show_updated=true,
+  show_reading_time=true,
+  show_word_count=false,
+  show_tags=true,
+  tags_sep=" "
+) -%}
+
+  <header class="post-header">
+    <h1 class="post-title">{{ page.title }}</h1>
+
+    <div class="post-meta-inline">
+      {# date / updated #}
+      {% if show_date and page.date %}
+        <span class="post-date">
+          {{ page.date | date(format=date_format) }}
+        </span>
+      {% endif %}
+
+      {% if show_updated and page.updated and page.updated != page.date %}
+        <span class="post-updated">
+          (updated {{ page.updated | date(format=date_format) }})
+        </span>
+      {% endif %}
+
+      {# reading time / word count #}
+      {% if show_reading_time and page.reading_time %}
+        <span class="post-reading-time">: : {{ page.reading_time }} min read</span>
+      {% endif %}
+
+      {% if show_word_count and page.word_count %}
+        <span class="post-word-count">: : {{ page.word_count }} words</span>
+      {% endif %}
+
+      {# tags #}
+      {% if show_tags and page.taxonomies and page.taxonomies.tags %}
+        <span class="post-tags-inline">
+          : : 
+          {% for tag in page.taxonomies.tags | sort | unique(case_sensitive=false) %}
+            <a class="post-tag" href="{{ get_taxonomy_url(kind='tags', name=tag) | safe }}">#{{ tag }}</a>{% if not loop.last %}{{ tags_sep }}{% endif %}
+          {% endfor %}
+        </span>
+      {% endif %}
+
+  </header>
+
+{%- endmacro header %}
+
+
+{# Full content #}
+{% macro content(page) -%}
+
+  <div class="post-content">
+    {{ page.content | safe }}
+  </div>
+
+{%- endmacro content %}
+
+{# Wikipedia-like table of contents #}
+{% macro toc_wiki(page, title="Contents") %}
+  {% if page.toc and page.toc | length > 0 %}
+    {% set toc_id = "toc-" ~ page.slug %}
+    <nav class="toc" id="{{ toc_id }}" aria-label="Table of contents">
+      <div class="toc-title">{{ title }}</div>
+      <ol class="toc-list" data-toc-root>
+        <li class="toc-item"><a class="toc-link" href="#"><span class="toc-text">(Top)</span></a></li>
+        {{ self::toc_items(nodes=page.toc) }}
+      </ol>
+    </nav>
+
+    {# Behavior for collapsible & scrollspy #}
+  {% endif %}
+  <script>
+
+  document.addEventListener("DOMContentLoaded", () => {
+    const toc = document.getElementById("toc-{{ page.slug }}");
+    if (!toc) return;
+
+    // --- Collapse/expand (event delegation) ---
+    toc.addEventListener("click", (e) => {
+      const btn = e.target.closest(".toc-toggle");
+      if (!btn || !toc.contains(btn)) return;
+
+      const li = btn.closest(".toc-item");
+      if (!li) return;
+
+      const open = li.classList.toggle("is-open");
+      btn.setAttribute("aria-expanded", open ? "true" : "false");
+
+      e.stopPropagation();
+    });
+
+    // --- Scrollspy (your simple version, with ancestor opening) ---
+    const tocLinks = toc.querySelectorAll(".toc a[href^='#']");
+    const headings = Array.from(tocLinks)
+      .map((a) => document.getElementById(a.getAttribute("href").slice(1)))
+      .filter(Boolean);
+
+    if (headings.length === 0) return;
+
+    const clearActive = () => {
+      toc.querySelectorAll(".is-active").forEach((n) => n.classList.remove("is-active"));
+    };
+
+    function openAncestors(a) {
+      let li = a.closest("li.toc-item");
+      while (li) {
+        li.classList.add("is-open");
+        const btn = li.querySelector(":scope > .toc-toggle");
+        if (btn) {
+          btn.setAttribute("aria-expanded", "true");
+        }
+        li = li.parentElement?.closest("li.toc-item");
+      }
+    }
+
+    function activateById(id) {
+      clearActive();
+      if (!id) return;
+      const a = toc.querySelector(`.toc a[href="#${CSS.escape(id)}"]`);
+      if (!a) return;
+      a.classList.add("is-active");
+      openAncestors(a);
+    }
+
+    let ticking = false;
+    function updateActiveLink() {
+      ticking = false;
+      const triggerLine = window.innerHeight * 0.25; // 25% from top
+      let current = null;
+
+      // pick the LAST heading above the trigger line
+      for (let i = headings.length - 1; i >= 0; i--) {
+        const rect = headings[i].getBoundingClientRect();
+        if (rect.top <= triggerLine) { current = headings[i]; break; }
+      }
+
+      activateById(current ? current.id : null);
+    }
+
+    window.addEventListener("scroll", () => {
+      if (!ticking) {
+        ticking = true;
+        requestAnimationFrame(updateActiveLink);
+      }
+    }, { passive: true });
+
+    window.addEventListener("resize", updateActiveLink);
+    window.addEventListener("load", updateActiveLink);
+
+    // hash navigation support
+    window.addEventListener("hashchange", () => {
+      activateById(decodeURIComponent(location.hash.slice(1)));
+    });
+
+    // initial
+    updateActiveLink();
+    if (location.hash) activateById(decodeURIComponent(location.hash.slice(1)));
+  });
+</script>
+{% endmacro toc_wiki %}
+
+{# recursive item renderer #}
+{% macro toc_items(nodes) %}
+  {% for h in nodes %}
+    {% set has_children = h.children and h.children | length > 0 %}
+
+    <li class="toc-item{% if has_children %} has-children is-open{% endif %}">
+      {% if has_children %}
+        <button class="toc-toggle"
+                type="button"
+                aria-label="Toggle {{ h.title | striptags }}"
+                aria-expanded="true"
+                data-toc-toggle>
+          <span class="toc-caret" aria-hidden="true">›</span>
+        </button>
+      {% else %}
+        <span class="toc-spacer" aria-hidden="true"></span>
+      {% endif %}
+
+      <a class="toc-link"
+         href="#{{ h.id }}"
+         data-target="{{ h.id }}">
+        <span class="toc-text">{{ h.title | safe }}</span>
+      </a>
+
+      {% if has_children %}
+        <ol class="toc-list">
+          {{ self::toc_items(nodes=h.children) }}
+        </ol>
+      {% endif %}
+    </li>
+  {% endfor %}
+{% endmacro toc_items %}

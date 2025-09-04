@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+{% set blog = get_section(path="blog/_index.md") %}
+{% set posts = blog.pages | sort(attribute="date") | reverse | slice(end=config.extra.recent_posts) %}
+
+{{
+  about_macros::about()
+}}
+
+{{ post_macros::post_list(
+    pages=posts,
+    summary_words=config.extra.summary_fallback_words | default(value=200),
+    class="posts",
+    tags_sep=""
+) }}
+
+{% if posts | length > config.extra.recent_posts %}
+  <p class="older-link">
+    <a href="{{ blog.permalink | safe }}">Check out older posts →</a>
+  </p>
+{% endif %}
+
+{% endblock content %}

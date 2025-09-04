@@ -1,0 +1,41 @@
+{% macro menu(config, current_path) %}
+  {% set current_item = false %}
+  {% if config.extra.menu_items %}
+    {% set menu_items = config.extra.menu_items %}
+
+    {% for item in menu_items %}
+      {% set item_url = item.url | replace(from="$BASE_URL", to=config.base_url) %}
+      {% set is_current = current_url == item_url ~ "/" or current_url is starting_with(item_url) %}
+      {% set is_base = item_url == config.base_url or item_url == config.base_url ~ "/" %}
+
+      {%- if is_base %}
+        {%- set_global base_item = item -%}
+      {% endif -%}
+
+      {%- if is_current and not is_base %}
+          {%- set_global current_item = item -%}
+      {% endif -%}
+    {% endfor %}
+
+    {% if not current_item and base_item %}
+      {# No match w/ menu URLs, probably blog post #}
+      {% set current_item = base_item %}
+    {% endif %}
+    
+    {{ menu_macros::menu_for(config=config, current_item=current_item) }}
+  {% endif %}
+{% endmacro menu %}
+
+{% macro menu_for(config, current_item) %}
+  {% set menu_items = config.extra.menu_items %}
+
+  <nav class="menu">
+    <ul class="menu-inner">
+    {% for item in menu_items %}
+      <li class="menu-item {% if current_item and current_item == item %} active {% endif %}">
+        <a href="{{ item.url | replace(from="$BASE_URL", to=config.base_url) | safe }}">{{ item.name | safe }}</a>
+      </li>
+    {% endfor %}
+    </ul>
+  </nav>  
+{% endmacro menu_for %}

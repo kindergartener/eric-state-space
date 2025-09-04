@@ -1,0 +1,80 @@
+@font-face {
+  font-family: "Fira Sans";
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+  src:
+    local("Fira Sans"),
+    url("/fonts/FiraSans-Regular.ttf") format("truetype");
+  font-feature-settings: "locl";
+}
+
+@font-face {
+  font-family: "Fira Sans";
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+  src:
+    local("Fira Sans Bold"),
+    url("/fonts/FiraSans-Bold.ttf") format("truetype");
+  font-feature-settings: "locl";
+}
+
+@font-face {
+  font-family: "Fira Sans";
+  font-weight: 400;
+  font-style: italic;
+  font-display: swap;
+  src:
+    local("Fira Sans Italic"),
+    url("/fonts/FiraSans-Italic.ttf") format("truetype");
+  font-feature-settings: "locl";
+}
+
+@font-face {
+  font-family: "Merriweather";
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+  src:
+    local("Merriweather"),
+    url("/fonts/Merriweather_24pt-Regular.ttf") format("truetype");
+  font-feature-settings: "locl";
+}
+
+@font-face {
+  font-family: "Merriweather";
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+  src:
+    local("Merriweather"),
+    url("/fonts/Merriweather_24pt-Bold.ttf") format("truetype");
+  font-feature-settings: "locl";
+}
+
+@font-face {
+  font-family: "Departure Mono";
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+  src:
+    local("Departure Mono"),
+    url("/fonts/DepartureMono-Regular.woff2") format("woff2"),
+    url("/fonts/DepartureMono-Regular.woff") format("woff"),
+    url("/fonts/DepartureMono-Regular.otf") format("opentype");
+  font-feature-settings: "locl";
+}
+
+$font-primary: "Fira Sans", sans-serif;
+$font-heading: "Merriweather", serif;
+$font-code: "Departure Mono", monospace;
+
+$font-size-base: 1rem;
+$font-size-50: 11px;
+$font-size-75: $font-size-base * 0.75;
+$font-size-100: $font-size-base * 1.0;
+$font-size-150: $font-size-base * 1.25;
+$font-size-200: $font-size-base * 1.5;
+$font-size-300: $font-size-base * 2.0;
+$font-size-400: $font-size-base * 3.0;

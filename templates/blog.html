@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h1>{{ section.title }}</h1>
+
+{% set pages = section.pages | sort(attribute="date") | reverse %}
+
+{{ post_macros::post_list(
+    pages=pages,
+    summary_words=config.extra.summary_fallback_words | default(value=60),
+    class="posts",
+    tags_sep=""
+) }}
+
+{% endblock content %}

@@ -1,0 +1,25 @@
+{% extends "blog-base.html" %}
+
+{% block left %}
+
+    {{ post_macros::toc_wiki(page=page, title="Contents") }}
+
+{% endblock left %}
+
+{% block blog_content %}
+
+  {{ post_macros::header(
+      page=page,
+      date_format="%Y-%m-%d",
+      show_date=true,
+      show_updated=true,
+      show_reading_time=true,
+      show_word_count=false,
+      show_tags=true
+  ) }}
+
+  {{ post_macros::content(
+      page=page,
+  ) }}
+
+{% endblock blog_content %}

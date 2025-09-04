@@ -1,0 +1,8 @@
+<svg viewBox="0 0 1200 800" xmlns="http://www.w3.org/2000/svg" width="1200" height="800">
+<style>
+text { font: 12px system-ui, sans-serif; fill: #222; }
+.line { stroke: #999; stroke-opacity: .6; }
+.node { fill: #3b82f6; }
+</style>
+<rect x="0" y="0" width="1200" height="800" fill="white" />
+</svg>
