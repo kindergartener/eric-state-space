@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <!-- Enable responsiveness on mobile devices-->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <link rel="stylesheet" href="http://ericstate.space/global.css">
+
+  
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css"
+    integrity="sha384-5TcZemv2l/9On385z///+d7MSYlvIEw9FuZTIdZ14vJLqWphw7e7ZPuOiCHJcFCP" crossorigin="anonymous">
+
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.js"
+    integrity="sha384-cMkvdD8LoxVzGF/RPUKAcvmm49FQ0oxwDF3BGKtDXcEc+T1b2N+teh/OJfpU0jr6"
+    crossorigin="anonymous"></script>
+  
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/contrib/auto-render.min.js"
+    integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh" crossorigin="anonymous"
+    onload="renderMathInElement(document.body);"></script>
+  
+  
+
+  <title>eric state space</title>
+</head>
+
+<body>
+    <header class="header">
+       
+
+      
+        
+  
+  
+    
+
+    
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+
+    
+      
+      
+    
+    
+    
+  
+
+  <nav class="menu">
+    <ul class="menu-inner">
+    
+      <li class="menu-item  active ">
+        <a href="http://ericstate.space">blog</a>
+      </li>
+    
+      <li class="menu-item ">
+        <a href="http://ericstate.space/tags">tags</a>
+      </li>
+    
+      <li class="menu-item ">
+        <a href="http://ericstate.space/experiments">experiments</a>
+      </li>
+    
+      <li class="menu-item ">
+        <a href="http://ericstate.space/archive">archive</a>
+      </li>
+    
+    </ul>
+  </nav>  
+
+  
+
+      
+    </header>
+
+    <div class="container-inner 
+  container-inner-blog
+">
+      <div class="content">
+        
+  <div class="layout-blog">
+    <aside class="layout-left">
+      
+
+    
+  
+    
+    <nav class="toc" id="toc-buddhabrot" aria-label="Table of contents">
+      <div class="toc-title">Contents</div>
+      <ol class="toc-list" data-toc-root>
+        <li class="toc-item"><a class="toc-link" href="#"><span class="toc-text">(Top)</span></a></li>
+        
+  
+    
+
+    <li class="toc-item">
+      
+        <span class="toc-spacer" aria-hidden="true"></span>
+      
+
+      <a class="toc-link"
+         href="#where-s-the-buddha"
+         data-target="where-s-the-buddha">
+        <span class="toc-text">Where's the Buddha?</span>
+      </a>
+
+      
+    </li>
+  
+    
+
+    <li class="toc-item">
+      
+        <span class="toc-spacer" aria-hidden="true"></span>
+      
+
+      <a class="toc-link"
+         href="#the-rendering-process"
+         data-target="the-rendering-process">
+        <span class="toc-text">The Rendering Process</span>
+      </a>
+
+      
+    </li>
+  
+    
+
+    <li class="toc-item">
+      
+        <span class="toc-spacer" aria-hidden="true"></span>
+      
+
+      <a class="toc-link"
+         href="#pseudocolor"
+         data-target="pseudocolor">
+        <span class="toc-text">Pseudocolor</span>
+      </a>
+
+      
+    </li>
+  
+    
+
+    <li class="toc-item">
+      
+        <span class="toc-spacer" aria-hidden="true"></span>
+      
+
+      <a class="toc-link"
+         href="#towards-nirvana"
+         data-target="towards-nirvana">
+        <span class="toc-text">Towards Nirvana</span>
+      </a>
+
+      
+    </li>
+  
+
+      </ol>
+    </nav>
+
+    
+  
+  <script>
+
+  document.addEventListener("DOMContentLoaded", () => {
+    const toc = document.getElementById("toc-buddhabrot");
+    if (!toc) return;
+
+    // --- Collapse/expand (event delegation) ---
+    toc.addEventListener("click", (e) => {
+      const btn = e.target.closest(".toc-toggle");
+      if (!btn || !toc.contains(btn)) return;
+
+      const li = btn.closest(".toc-item");
+      if (!li) return;
+
+      const open = li.classList.toggle("is-open");
+      btn.setAttribute("aria-expanded", open ? "true" : "false");
+
+      e.stopPropagation();
+    });
+
+    // --- Scrollspy (your simple version, with ancestor opening) ---
+    const tocLinks = toc.querySelectorAll(".toc a[href^='#']");
+    const headings = Array.from(tocLinks)
+      .map((a) => document.getElementById(a.getAttribute("href").slice(1)))
+      .filter(Boolean);
+
+    if (headings.length === 0) return;
+
+    const clearActive = () => {
+      toc.querySelectorAll(".is-active").forEach((n) => n.classList.remove("is-active"));
+    };
+
+    function openAncestors(a) {
+      let li = a.closest("li.toc-item");
+      while (li) {
+        li.classList.add("is-open");
+        const btn = li.querySelector(":scope > .toc-toggle");
+        if (btn) {
+          btn.setAttribute("aria-expanded", "true");
+        }
+        li = li.parentElement?.closest("li.toc-item");
+      }
+    }
+
+    function activateById(id) {
+      clearActive();
+      if (!id) return;
+      const a = toc.querySelector(`.toc a[href="#${CSS.escape(id)}"]`);
+      if (!a) return;
+      a.classList.add("is-active");
+      openAncestors(a);
+    }
+
+    let ticking = false;
+    function updateActiveLink() {
+      ticking = false;
+      const triggerLine = window.innerHeight * 0.25; // 25% from top
+      let current = null;
+
+      // pick the LAST heading above the trigger line
+      for (let i = headings.length - 1; i >= 0; i--) {
+        const rect = headings[i].getBoundingClientRect();
+        if (rect.top <= triggerLine) { current = headings[i]; break; }
+      }
+
+      activateById(current ? current.id : null);
+    }
+
+    window.addEventListener("scroll", () => {
+      if (!ticking) {
+        ticking = true;
+        requestAnimationFrame(updateActiveLink);
+      }
+    }, { passive: true });
+
+    window.addEventListener("resize", updateActiveLink);
+    window.addEventListener("load", updateActiveLink);
+
+    // hash navigation support
+    window.addEventListener("hashchange", () => {
+      activateById(decodeURIComponent(location.hash.slice(1)));
+    });
+
+    // initial
+    updateActiveLink();
+    if (location.hash) activateById(decodeURIComponent(location.hash.slice(1)));
+  });
+</script>
+
+
+
+    </aside>
+
+    <main class="content">
+      
+
+  <header class="post-header">
+    <h1 class="post-title">Buddhabrot</h1>
+
+    <div class="post-meta-inline">
+      
+      
+        <span class="post-date">
+          2025-08-04
+        </span>
+      
+
+      
+
+      
+      
+        <span class="post-reading-time">: : 5 min read</span>
+      
+
+      
+
+      
+      
+        <span class="post-tags-inline">
+          : : 
+          
+            <a class="post-tag" href="http://ericstate.space/tags/creative-coding/">#creative-coding</a> 
+          
+            <a class="post-tag" href="http://ericstate.space/tags/math/">#math</a> 
+          
+            <a class="post-tag" href="http://ericstate.space/tags/numerical-computation/">#numerical-computation</a> 
+          
+            <a class="post-tag" href="http://ericstate.space/tags/rust/">#rust</a> 
+          
+            <a class="post-tag" href="http://ericstate.space/tags/visualization/">#visualization</a>
+          
+        </span>
+      
+
+  </header>
+
+  <div class="post-content">
+    <p>The Mandelbrot set is one of those pieces of math that somehow finds itself into the public consciousness, the quintessential example of a fractal.
+Very informally, it's the set of complex numbers \(c\) for which the function \(f(z) = z^2 + c\) doesn't diverge when iterated to infinity.</p>
+<p>Renders of the set show an infinitely complex boundary that appears recursive and extremely detailed. You may also be familiar with
+"zooms" of the Mandelbrot set that showcase this recursive nature:</p>
+<style>
+  .mandelbrots-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    justify-items: center
+  }
+  .mandelbrots-grid img {
+    max-width: 100%;
+    height: auto;
+    align-self: center;
+  }
+  .mandelbrots-grid figcaption {
+    grid-column: 1 / -1;
+  }
+</style>
+<figure class="mandelbrots-grid">
+  <img alt="Mandelbrot Set" src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/21/Mandel_zoom_00_mandelbrot_set.jpg/1280px-Mandel_zoom_00_mandelbrot_set.jpg" />
+  <img alt="Mandelbrot Zoom" src="https://upload.wikimedia.org/wikipedia/commons/b/b8/Self-Similarity-Zoom.gif" />
+  <figcaption>
+    Render of the Mandelbrot set and a zoom from the <a href="https://en.wikipedia.org/wiki/Mandelbrot_set">Wikipedia page</a>.
+  </figcaption>
+</figure>
+<p>In this post I attempt to render the Buddhabrot, a related fractal spawned from the points that <em>do</em> diverge.</p>
+<h1 id="where-s-the-buddha">Where's the Buddha?</h1>
+<p>In short, the Buddhabrot is a probability distribution over the paths of points that diverge in the Mandelbrot fractal.
+In other words, we look at each point that escapes in the Mandelbrot fractal and track each point it passes through on its journey
+to divergence. This essentially creates a heatmap of the most commonly-visited spots as points travel off to infinity. Here's what it looks like:</p>
+<figure>
+  <img alt="Buddhabrot" src="/images/buddhabrot.png" />
+</figure>
+<figcaption>
+</figcaption>
+<p>Wow! The image is still fractal in nature but with a ghostly, almost outer-space-like element to it. In this way we can really see the fractal's namesake -- the Buddha
+sitting in meditation pose.</p>
+<p>Okay I'm actually lying to you. The picture above isn't the <em>real</em> Buddhabrot. The real image is just black-and-white and can look completely different based on the parameters you chose.
+I'll show you the rendering process involved in creating the final image.</p>
+<h1 id="the-rendering-process">The Rendering Process</h1>
+<p>The logic behind rendering a Buddhabrot image is pretty simple. First we create 2D image buffer with dimensions
+<code>WIDTH</code> \(\times\) <code>HEIGHT</code>. Each pixel \((i, j)\) for \(i = 1, \ldots , m\) and \(j = 1, \ldots , n\) corresponds to the complex number
+\(c = \frac{\mathrm{WIDTH}}{m} + \frac{\mathrm{HEIGHT}}{n} i\).</p>
+<p>Each pixel has an associated counter that starts at 0. We sample <code>SAMPLES</code> random points (in our case 16,000,000) and iterate them
+through the Mandelbrot function \(f(z) = z^2 + c\). For points that escape within a certain number of <code>MAX_ITERATIONS</code>, increment the counters
+of all pixels passed through during that process. Discard points that don't escape with this process.</p>
+<p>In the end we have a histogram showing the likelihood that escaped points pass these given pixels. The final step is to color each pixel in the output image a certain
+grayscale value based on the normalized range of all pixel counter values.</p>
+<p>What we end up with is an image like so:</p>
+<style>
+  .iterations-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+    justify-items: center;
+  }
+  .iterations-grid img {
+    max-width: 100%;
+    height: auto;
+  }
+  .iterations-grid figcaption {
+    grid-column: 1 / -1;
+  }
+</style>
+<figure class="iterations-grid">
+  <img alt="Buddhabrot MAX_ITERATIONS=16" src="/images/buddhabrot_16.png" />
+  <img alt="Buddhabrot MAX_ITERATIONS=64" src="/images/buddhabrot_64.png" />
+  <img alt="Buddhabrot MAX_ITERATIONS=256" src="/images/buddhabrot_256.png" />
+  <img alt="Buddhabrot MAX_ITERATIONS=4096" src="/images/buddhabrot_4096.png" />
+  <figcaption>
+    Buddhabrot renders with (from top-left to bottom-right) MAX_ITERATIONS=16, 64, 256, 4096.
+  </figcaption>
+</figure>
+<p>Great! But these images are still in black-and-white. In the following section, I borrow a technique from astronomy
+to breathe life into these pictures.</p>
+<h1 id="pseudocolor">Pseudocolor</h1>
+<p>Pseudocolor techniques map intensity values to colors in grayscale images. If you're wondering why the first Buddhabrot image looks like some sort of nebula,
+it's because the same technique is used in astronomy to map non-visible light wavelengths to visible ones (colors).</p>
+<p>In our case, we can change the value of <code>MAX_ITERATIONS</code> and map each output image to a specific color. Then, we layer the images on top of each other with the correct blending mode to
+produce the final colorized image:</p>
+<figure>
+  <img alt="Buddhabrot Color Combinations" src="/images/buddhabrot_color-combos.png" />
+  <figcaption>
+    Map MAX_ITERATIONS=64 to blue, 256 to red, and 4096 to green. Then combine with lighten blending mode.
+  </figcaption>
+</figure>
+<p>Below are a few examples of zoomed-in pseudocolor Buddhabrots:</p>
+<style>
+  .pseudocolor-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+    justify-items: center;
+  }
+  .pseudocolor-grid img {
+    max-width: 100%;
+    height: auto;
+  }
+</style>
+<figure>
+  <img alt="Buddhabrot Zoom @ -0.3 + 0.65i" src="/images/buddhabrot_-0.3x0.65.png">
+  <figcaption>
+    Pseudocolor Buddhabrot zoom centered at -0.3 + 0.65i
+  </figcaption>
+  <br>
+  <img alt="Buddhabrot Zoom @ -1.25 + 0.0i" src="/images/buddhabrot_-1.25x0.png">
+  <figcaption>
+    Pseudocolor Buddhabrot zoom centered at -1.25 + 0.0i
+  </figcaption>
+</figure>
+<h1 id="towards-nirvana">Towards Nirvana</h1>
+<p>The goal of this experiment was to create some neat visualizations using Rust and learn a thing or two along the way. While I was able to significantly decrease
+rendering times by parallelizing with <a href="https://crates.io/crates/rayon">rayon</a>, the computation remains solely on the CPU. Perhaps one day I'll revisit the Buddha on the GPU,
+similar to <a href="https://benedikt-bitterli.me/buddhabrot/">this project</a>. Furthermore, I'd love to approach the rendering process through a <a href="http://www.steckles.com/buddha/">probabilistic lens</a> by leveraging the
+Metropolis-Hastings Algorithm.</p>
+
+  </div>
+
+
+    </main>
+
+    <aside class="layout-right">
+      
+    </aside>
+  </div>
+
+      </div>
+    </div>
+
+    <footer class="footer">
+       
+    </footer>
+</body>
+
+</html>
