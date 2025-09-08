@@ -2,17 +2,23 @@
 
 {% block content %}
 
-<h1>All Tags</h1>
+<div class="about">
+  <div class="about-inner">
+    <h1>All Tags</h1>
+  </div>
+</div>
 
-<ul>
-  {% for term in terms %}
+<div class="posts">
+  <ul>
+    {% for term in terms %}
 
-    {% set pages = term.pages | sort(attribute="date") | reverse %}
-    <li class="tag-list">
-      <a href={{ term.permalink | safe }}>{{ term.name }} ({{ term.pages | length }} post{{ term.pages | length | pluralize }})</a>
-    </li>
+      {% set pages = term.pages | sort(attribute="date") | reverse %}
+      <li class="tag-list">
+        <a href={{ term.permalink | safe }}>{{ term.name }} ({{ term.pages | length }} post{{ term.pages | length | pluralize }})</a>
+      </li>
 
-  {% endfor %}
-</ul>
+    {% endfor %}
+  </ul>
+</div>
 
 {% endblock content %}

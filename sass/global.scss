@@ -103,27 +103,34 @@ figure {
   margin: $spacing-300 0;
   padding: $spacing-100;
   background: $color-surface-lighter;
-  border: 1px solid;
+  border: 1px solid $color-surface-dark;
 
   img {
-    margin: 0;
+    border: 1px solid $color-surface-dark;
+    display: block;
+    max-width: 100%;
+    height: auto;
+    margin: 0 auto;
   }
 
-  &.left,
-  img {
+  &.left {
+    display: block;
+    float: left;
     margin-right: auto;
   }
 
-  &.center,
-  img {
+  &.right {
+    display: block;
+    float: right;
     margin-left: auto;
-    margin-right: auto;
   }
 
-  &.right,
-  img {
+  &.center {
     margin-left: auto;
+    margin-right: auto;
+    float: none;
   }
+
 
   figcaption {
     text-align: center;
@@ -135,6 +142,7 @@ figure {
 
 .container-inner {
   max-width: $content-width;
+  min-height: 100vh;
   width: 100%;
   margin-inline: auto;
 }
@@ -208,7 +216,7 @@ figure {
     content: "";
     height: 0;
     display: block;
-    border-bottom: 2px dashed $color-subtext;
+    border-bottom: 2px solid $color-subtext;
     margin-top: $spacing-150;
   }
 
@@ -224,6 +232,7 @@ figure {
 
 .about-inner {
   padding: 0 $spacing-200;
+  display: flow-root;
 
   @media (max-width: $tablet-max-width) {
     padding: 0 $spacing-150;
@@ -231,6 +240,64 @@ figure {
 
   @media (max-width: $phone-max-width) {
     padding: 0 $spacing-100;
+  }
+}
+
+.about-pic {
+  width: 200px;
+  height: auto;
+  float: right;
+  margin-left: $spacing-200;
+  padding: $spacing-50;
+  background: $color-surface-lighter;
+  border: 1px solid $color-surface-dark;
+
+  img {
+    display: block;
+    border: 1px solid $color-surface-dark;
+    margin: 0;
+  }
+
+  @media (max-width: $phone-max-width) {
+    margin-left: $spacing-100;
+  }
+}
+
+.socials {
+  list-style: none;
+  display: flex;
+  margin-top: $spacing-200;
+  gap: $spacing-100;
+}
+
+.footer {
+  margin-top: $spacing-400;
+  color: $color-subtext;
+  border-top: 1px solid $color-surface-dark;
+  background: $color-surface-lighter;
+  padding: $spacing-200 $spacing-400;
+
+  .quote {
+    text-align: center;
+    margin-bottom: $spacing-200;
+  }
+
+  .footer-inner {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    justify-items: center;
+  }
+}
+
+.archive-content {
+  h1 {
+    display: block;
+    margin: $spacing-200 0;
+    margin-bottom: $spacing-100;
+  }
+
+  ul ul {
+    padding-left: $spacing-200;
   }
 }
 
@@ -248,8 +315,8 @@ figure {
 }
 
 .post-card {
-  background: $color-surface-light;
-  /* @include grid-bg; */
+  background: $color-surface-lighter;
+  border: 1px solid $color-surface-dark;
   padding: $spacing-100 $spacing-150;
   margin-bottom: $spacing-150;
 
@@ -282,6 +349,10 @@ figure {
   align-items: baseline;
   gap: $spacing-50;
 
+  @media (max-width: $tablet-max-width) {
+    display: block;
+  }
+
   @media (max-width: $phone-max-width) {
     display: flex;
     flex-wrap: wrap;
@@ -301,24 +372,16 @@ figure {
 }
 
 .meta-tags {
-  display: inline;
+  display: flex;
+  flex-wrap: wrap;
+  gap: $spacing-25;
 
   @media (max-width: $phone-max-width) {
     flex-basis: 100%;
-    display: flex;
-    align-items: stretch;
-    gap: $spacing-25;
     margin-top: -$spacing-25;
-
-    &::before {
-      content: "";
-      display: inline-block;
-      border-right: 2px solid $color-subtext;
-      margin-left: $spacing-50;
-      margin-right: $spacing-50;
-      margin-top: -$spacing-25;
-      height: $spacing-150;
-    }
+    border-left: 2px solid $color-subtext;
+    padding-left: $spacing-100;
+    margin-left: $spacing-50;
   }
 }
 
@@ -389,6 +452,7 @@ code {
 code:not([class^="language-"]) {
   background: $color-surface-light;
   padding: $spacing-25;
+  border: 1px solid $color-surface-dark;
 }
 
 .line {

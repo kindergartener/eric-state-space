@@ -1,0 +1,22 @@
+{% macro footer() %}
+  <div class="quote">
+    {% if config.extra.quote %}
+      <em>"{{ config.extra.quote.text | safe }}"</em>
+      <br>
+      -
+      {{ config.extra.quote.author }}
+    {% endif %}
+  </div>
+
+  <div class="footer-inner">
+
+    {% if config.extra.name %}
+      <div class="copyright">
+        <span>© {{ now() | date(format="%Y") }} {{ config.extra.name }}</span>
+      </div>
+    {% endif %}
+
+    <span>Powered by <a href="https://www.getzola.org/">Zola</a></span>
+
+  </div>
+{% endmacro footer %}

@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% set pages = section.pages | sort(attribute="date") | reverse %}
+
+{% block content %}
+
+  <div class="about">
+    <div class="about-inner">
+      <h1>{{ section.title }}</h1>
+    </div>
+  </div>
+
+  <div class="posts">
+    Nothing here yet!
+  </div>
+
+{% endblock content %}

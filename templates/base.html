@@ -1,6 +1,7 @@
 {% import "macros/post.html" as post_macros %}
 {% import "macros/menu.html" as menu_macros %}
 {% import "macros/about.html" as about_macros %}
+{% import "macros/footer.html" as footer_macros %}
 
 <!DOCTYPE html>
 <html lang="en">
@@ -45,7 +46,9 @@
     </div>
 
     <footer class="footer">
-      {% block footer %} {% endblock footer %}
+      {% block footer %}
+        {{ footer_macros::footer() }}
+      {% endblock footer %}
     </footer>
 </body>
 

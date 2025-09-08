@@ -1,1 +1,0 @@
-FilterMap<walkdir::IntoIter, fn(Result<walkdir::DirEntry, walkdir::Error>) -> Result<Result<walkdir::DirEntry, walkdir::Error>, _> {Result::<Result<walkdir::DirEntry, walkdir::Error>, _>::Ok}>

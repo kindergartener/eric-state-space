@@ -41,7 +41,7 @@ Simple, but not really practical. This algorithm has exponential time complexity
 The runtime graph below is pretty pitiful, as we can only calculate the 38th Fibonacci number this way. I could do that with
 a pen, paper, and a free afternoon!
 
-<figure>
+<figure class="center">
   <img src="/images/fibonacci_recursive.png" alt="Recursive Fibonacci" />
 
   <figcaption>
@@ -92,7 +92,7 @@ pub fn fib_slidingwin(n: usize) -> BigUint {
 
 Let's see what the runtime graph looks like:
 
-<figure>
+<figure class="center">
   <img src="/images/fibonacci_sliding-window.png" alt="Sliding Window Fibonacci" />
 
   <figcaption>
@@ -138,9 +138,9 @@ $$
 \dots
 $$
 
-In general, the square matrix \\(\begin{bmatrix} 1 & 1 \\ 1 & 0 \end{bmatrix}
-\\) sends \\(\begin{bmatrix} \mathrm{F_{n}} \\ \mathrm{F_{n-1}} \end{bmatrix}\\)
-to the "next" vector \\(\begin{bmatrix} \mathrm{F_{n+1}} \\ \mathrm{F_{n}} \end{bmatrix}\\):
+In general, the square matrix \\(\begin{bmatrix} 1 & 1 \newline 1 & 0 \end{bmatrix}
+\\) sends \\(\begin{bmatrix} \mathrm{F_{n}} \newline \mathrm{F_{n-1}} \end{bmatrix}\\)
+to the "next" vector \\(\begin{bmatrix} \mathrm{F_{n+1}} \newline \mathrm{F_{n}} \end{bmatrix}\\):
 
 $$
 \begin{bmatrix}
@@ -251,8 +251,8 @@ Here `matrix_mult` is a function that multiplies 2x2 matrices. Looking at the gr
 we achieve a significant improvement over the sliding window method, with a maximum
 iteration of \\(n=4,370,432\\):
 
-<figure>
-  <img class="center" src="/images/fibonacci_matrix-mult.png" alt="Matrix Multiplication Fibonacci" />
+<figure class="center">
+  <img src="/images/fibonacci_matrix-mult.png" alt="Matrix Multiplication Fibonacci" />
 
   <figcaption>
     Runtime graph for matrix multiplication Fibonacci with max_n = 4,370,432.
@@ -390,7 +390,7 @@ pub fn fib_doubling(n: usize) -> BigUint {
 This algorithm is a significant improvement over Matrix Multiplication, achieving a maximum iteration of
 \\(n = 17,937,917\\):
 
-<figure>
+<figure class="center">
   <img src="/images/fibonacci_doubling.png" alt="Fast Doubling Fibonacci" />
 
   <figcaption>
@@ -444,7 +444,7 @@ The figures below show a more direct comparison between algorithms:
   </tr>
 </table>
 
-<figure>
+<figure class="center">
   <img src="/images/fibonacci_all.png" alt="All Fibonacci" />
 
   <figcaption>

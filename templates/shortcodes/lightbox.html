@@ -1,0 +1,15 @@
+{% set _src   = src | safe %}
+{% set _full  = full | default(value=src) | safe %}
+{% set _alt   = alt | default(value="") %}
+{% set _cap   = caption | default(value="") %}
+{% set _class = class | default(value="") %}
+
+<figure class="{{ _class }}">
+  <a href="{{ get_url(path=_full) }}" class="lightbox-trigger" data-full="{{ get_url(path=_full) }}">
+    <img src="{{ get_url(path=_src) }}" alt="{{ _alt }}" loading="lazy" decoding="async" />
+  </a>
+
+  {% if _cap != "" %}
+    <figcaption>{{ _cap }}</figcaption>
+  {% endif %}
+</figure>
