@@ -1,0 +1,1144 @@
+<div class="diamond-wrap">
+  <div class="diamond">
+
+    {% for p in range(start=1, end=8) %}
+      <div class="row row-up-{{p}}">
+        {% for q in range(start=1, end=p + 1) %}
+          <figure class="tile" data-p="{{p}}" data-q="{{q}}">
+            <img src="{{ get_url(path='doknots/' ~ p ~ 'x' ~ q ~ '-torus.gif') }}"
+                 width="64" height="64" loading="lazy" alt="({{p}}, {{q}})" />
+          </figure>
+        {% endfor %}
+        {% for q in range(start=1, end=8) | reverse %}
+          <figure class="tile" data-p="{{p}}" data-q="{{q}}">
+            <img src="{{ get_url(path='doknots/' ~ p ~ 'x' ~ q ~ '-torus.gif') }}"
+                 width="64" height="64" loading="lazy" alt="({{p}}, {{q}})" />
+          </figure>
+        {% endfor %}
+      </div>
+    {% endfor %}
+
+    {% for p in range(start=1, end=7) | reverse %}
+      <div class="row row-down-{{p}}">
+        {% for q in range(start=1, end=p + 1) %}
+          <figure class="tile" data-p="{{p}}" data-q="{{q}}">
+            <img src="{{ get_url(path='doknots/' ~ p ~ 'x' ~ q ~ '-torus.gif') }}"
+                 width="64" height="64" loading="lazy" alt="({{p}}, {{q}})" />
+          </figure>
+        {% endfor %}
+        {% for q in range(start=1, end=8) | reverse %}
+          <figure class="tile" data-p="{{p}}" data-q="{{q}}">
+            <img src="{{ get_url(path='doknots/' ~ p ~ 'x' ~ q ~ '-torus.gif') }}"
+                 width="64" height="64" loading="lazy" alt="({{p}}, {{q}})" />
+          </figure>
+        {% endfor %}
+      </div>
+    {% endfor %}
+
+  </div>
+</div>
+
+<div class="text-box">
+
+  <div id="ttt" aria-live="polite">
+    <div class="grid5" id="grid5" role="grid" aria-label="tic-tac-toe">
+      {% for r in range(start=0, end=5) %}
+        {% for c in range(start=0, end=5) %}
+          {% set inner = r>=1 and r<=3 and c>=1 and c<=3 %}
+          <button
+            class="cell {% if inner %}inner{% else %}outer{% endif %}"
+            data-r="{{ r }}" data-c="{{ c }}"
+            role="gridcell"
+            aria-label="row {{ r + 1 }}, col {{ c + 1 }}">
+          </button>
+        {% endfor %}
+      {% endfor %}
+    </div>
+  </div>
+
+  <div id="afci" aria-live="polite">
+    <p>Gurl ner fnvq gb unir orra srngurerq, jvgu pbpxf' urnqf, jvatf, naq uhzna nezf, jvgu terng pynjf; oernfgf, oryyvrf, naq srznyr cnegf uhzna.</p>
+    <form id="afci-form" autocomplete="off">
+      <input id="afci-input" type="text" required />
+    </form>
+  </div>
+
+  <div id="queens" aria-live="polite">
+    <div class="status"><span id="queens-left">8</span> x Q</div>
+    <div class="board" id="queens-board" role="grid">
+      {% for row in range(start=0, end=8) %}
+        {% for col in range(start=0, end=8) %}
+          <div class="cell" role="gridcell" data-row="{{ row }}" data-col="{{ col }}"></div>
+        {% endfor %}
+      {% endfor %}
+    </div>
+  </div>
+
+  <div id="xi" aria-live="polite">
+    <p>YVhJb20gb2Ygc0lYZXMsIGZvciB4aQ==</p>
+    <form id="xi-form" autocomplete="off">
+      <input id="xi-input" type="text" required />
+    </form>
+  </div>
+
+  <div id="magic5" aria-live="polite">
+    <div class="board" id="magic5-board" role="grid">
+      {% for r in range(start=0, end=5) %}
+        {% for c in range(start=0, end=5) %}
+          <div class="cell" role="gridcell">
+            <input type="number" min="1" max="25" inputmode="numeric" data-r="{{r}}" data-c="{{c}}">
+          </div>
+        {% endfor %}
+        <div class="cell sum-cell row-sum" data-row-sum="{{r}}"></div>
+      {% endfor %}
+      {% for c in range(start=0, end=5) %}
+        <div class="cell sum-cell col-sum" data-col-sum="{{c}}"></div>
+      {% endfor %}
+      <div class="cell corner"></div>
+      <div class="actions">
+        <button id="magic5-submit" type="submit">Go</button>
+        <button id="magic5-clear" type="button">No</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="plox">
+    <p>char*f="char*f=%c%s%c;main()
+     {printf(f,34,f,34,10);}%c";
+     main(){printf(f,34,f,34,10);}</p>
+    <form id="plox-form" autocomplete="off">
+      <input id="plox-input" type="text" required />
+    </form>
+  </div>
+
+  <div id="last">
+    <div id="knm">
+      <div class="sq"></div><div class="sq"></div><div class="sq"></div><div class="sq"></div>
+      <div class="sq"></div><div class="sq"></div><div class="sq"></div><div class="sq"></div>
+      <div class="sq"></div><div class="sq"></div><div class="sq"></div>
+    </div>
+  </div>
+
+</div>
+
+<div id="butterfly">
+  <a href="https://users.math.msu.edu/users/ruiterj2/math/Documents/Notes%20and%20talks/General%20linear%20group%20butterfly.pdf" target="_blank" rel="noopener noreferrer">
+    <img src="{{ get_url(path='/images/butterfly.gif') }}" width=100 loading="lazy" alt="butterfly" />
+  </a>
+</div>
+
+<style>
+  body {
+    margin: 0;
+    background: #222;
+    overflow: hidden;
+  }
+
+  .text-box {
+    font-family: monospace;
+    font-size: 18px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    min-width: 320px;
+    transform: translate(-50%, -50%);
+    background: rgba(0, 0, 0, 0.70);
+    color: white;
+    padding: 1.5rem 2rem;
+    border: 4px ridge white;
+    border-radius: 4px;
+    text-align: center;
+  }
+
+  #ttt {
+    position: relative;
+  }
+
+  #afci {
+    position: relative;
+    display: none;
+    opacity: 0.7;
+    color: white;
+  }
+
+  #afci-input,
+  #xi-input,
+  #plox-input {
+    opacity: 0.7;
+    color: black;
+    font-family: monospace;
+    font-size: 18px;
+  }
+
+  .grid5 {
+    --cell: 64px;
+    --gap: 2px;
+    display: grid;
+    grid-template-columns: repeat(5, var(--cell));
+    grid-template-rows: repeat(5, var(--cell));
+    gap: var(--gap);
+    margin: 0 auto;
+    touch-action: manipulation;
+  }
+
+  .cell {
+    width: var(--cell);
+    height: var(--cell);
+    font-family: monospace;
+    font-size: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    user-select: none;
+    border: none;
+  }
+  .cell.inner {
+    opacity: 0.7;
+    color: white;
+    cursor: pointer;
+  }
+  .cell.outer {
+    border: none;
+    background: transparent;
+    color: white;
+    opacity: 0;
+    cursor: default;
+  }
+  .cell[disabled] {
+    opacity: 0.7;
+    cursor: default;
+  }
+  .cell.revealed {
+    opacity: 0.7;
+  }
+
+  .diamond-wrap {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+  }
+
+  .diamond {
+    display: grid;
+  }
+
+  .diamond .row {
+    display: flex;
+    justify-content: center;
+    flex-wrap: nowrap;
+    gap: 4px;
+  }
+  
+  .tile {
+    display: grid;
+    justify-items: center;
+    position: relative;
+    margin: -2px -4px;
+  }
+
+  .tile img {
+    width: 64px;
+    height: 64px;
+    display: block;
+    user-select: none;
+    user-drag: none;
+  }
+
+  .tile img.red {
+    filter: brightness(0) saturate(100%) invert(13%) sepia(100%) saturate(7474%) hue-rotate(0deg) brightness(105%) contrast(118%);
+  }
+
+  #queens {
+    position: relative;
+    display: none;
+    user-select: none;
+  }
+
+  #queens .status {
+    margin-bottom: 1rem;
+    color: white;
+    opacity: 0.7;
+  }
+
+  #queens #queens-left {
+    color: white;
+    opacity: 0.85;
+  }
+
+  #queens .board {
+    display: grid;
+    grid-template-columns: repeat(8, 1fr);
+    grid-template-rows: repeat(8, 1fr);
+    gap: 2px;
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    opacity: 0.7;
+  }
+
+  #queens .cell {
+    position: relative;
+    display: grid;
+    font-size: 18px;
+    line-height: 1;
+    background: #fff;
+    color: #333;
+    place-items: center;
+    cursor: pointer;
+    touch-action: manipulation;
+  }
+  #queens .cell:nth-child(16n + 2),
+  #queens .cell:nth-child(16n + 4),
+  #queens .cell:nth-child(16n + 6),
+  #queens .cell:nth-child(16n + 8),
+  #queens .cell:nth-child(16n + 9),
+  #queens .cell:nth-child(16n + 11),
+  #queens .cell:nth-child(16n + 13),
+  #queens .cell:nth-child(16n + 15) {
+    background: #999;
+    color: #fff;
+  }
+
+  #queens .cell.queen::after {
+    content: "Q";
+    pointer-events: none;
+  }
+
+  #queens .board.invalid .cell::after,
+  #queens .board.valid .cell::after {
+    content: "Q";
+    pointer-events: none;
+  }
+
+  #xi {
+    position: relative;
+    display: none;
+    opacity: 0.7;
+  }
+
+  #magic5 {
+    position: relative;
+    display: none;
+    user-select: none;
+  }
+
+  #magic5 .board {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    grid-template-rows: repeat(6, 1fr);
+    gap: 2px;
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    opacity: 0.7;
+  }
+  #magic5 .board.submitted {
+    grid-template-columns: repeat(5, 1fr);
+    grid-template-rows: repeat(5, 1fr);
+  }
+
+  #magic5 .cell {
+    position: relative;
+    display: grid;
+    background: white;
+    place-items: center;
+    aspect-ratio: 1 / 1;
+  }
+
+  #magic5 input[type="number"] {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    text-align: center;
+    font-size: 18px;
+    line-height: 1;
+    border: none;
+    outline: none;
+    font-family: monospace;
+  }
+  #magic5 input[type="number"]::-webkit-outer-spin-button,
+  #magic5 input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+  #magic5 input[type="number"] { -moz-appearance: textfield; }
+
+  #magic5 button {
+    background: white;
+    cursor: pointer;
+    padding: 0.3rem 0.5rem;
+    font-family: monospace;
+    border: none;
+  }
+  #magic5 button:hover {
+    background: #eee;
+  }
+
+  #magic5 .sum-cell {
+    background: transparent;
+    color: white;
+  }
+  #magic5 .corner {
+    background: transparent;
+  }
+
+  #magic5 .actions {
+    grid-column: 1 / -1;
+    margin-top: 1rem;
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+  }
+
+  #magic5 .dup { background-color: #ffe6e6; }
+  #magic5 .out-of-range { background-color: #fff2cc; }
+  #magic5 .empty { background-color: #eee; }
+
+  #magic5 .magic5-submit,
+  #magic5 .magic5-clear, {
+    font-size: 18px;
+  }
+
+  #plox {
+    position: relative;
+    display: none;
+    user-select: none;
+    opacity: 0.7;
+  }
+
+  #last {
+    position: relative;
+    display: none;
+    user-select: none;
+  }
+
+  #knm {
+    display: grid;
+    grid-template-columns: repeat(11, 24px);
+    gap: 8px;
+    justify-content: center;
+    margin: 1rem 0;
+  }
+
+  #knm .sq {
+    width: 24px;
+    height: 24px;
+    background: #333;
+    opacity: 0.7;
+  }
+  #knm .sq.ok {
+    background: #00ff00;
+  }
+  #knm .sq.bad {
+    background: #ff0000;
+  }
+
+  #butterfly {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    opacity: 0;
+    user-select: none;
+    transition: opacity 2.5s ease-in;
+  }
+  #butterfly.show {
+    opacity: 1;
+  }
+</style>
+
+<script>
+function b64encodeUTF8(str) {
+  const bytes = new TextEncoder().encode(str);
+  let bin = ""
+  for (let i = 0; i < bytes.length; i++) bin += String.fromCharCode(bytes[i]);
+  return btoa(bin);
+}
+
+function win() {
+    const box = document.querySelector('.text-box');
+    if (box) box.style.display = 'none';
+
+    setTimeout(() => {
+      document.body.style.transition = 'background-color 1s ease';
+      document.body.style.backgroundColor = '#FF0000'; 
+  }, 2500);
+
+  // Redirect after a 2.5-second delay
+  setTimeout(() => {
+    const butterfly = document.getElementById('butterfly');
+    if (butterfly) {
+      butterfly.style.display = 'block';
+      butterfly.classList.add('show');
+    }
+  }, 3500);
+}
+
+function lose() {
+    setTimeout(() => {
+    // Hide box and fade the background to red
+    const box = document.querySelector('.text-box');
+    if (box) box.style.display = 'none';
+    document.body.style.transition = 'background-color 1s ease';
+    document.body.style.backgroundColor = '#FF0000'; 
+  }, 700);
+
+  // Redirect after a 2.5-second delay
+  setTimeout(() => {
+    window.location.href = "/experiments";
+  }, 2500);
+}
+
+(function tictactoe() {
+  // --- State ---
+  const B = Array.from({ length: 5 }, () => Array(5).fill(null)); // 5×5 board: null|'O'|'X'
+  const gridEl   = document.getElementById('grid5');
+  const cells    = Array.from(gridEl.querySelectorAll('.cell'));
+
+  let busy = false;
+  let over = false;
+
+  const isInner = (r, c) => r >= 1 && r <= 3 && c >= 1 && c <= 3;
+
+  function endGame(state) {
+    over = true;
+    busy = true;
+
+    if (state === 'win') {
+      setTimeout(() => {
+        document.querySelectorAll('.row-up-1 img, .row-down-1 img')
+          .forEach(img => img.classList.add('red'));
+        let afciEl = document.getElementById('afci');
+        if (afciEl) afciEl.style.display = 'block';
+        let tttEl = document.getElementById('ttt');
+        if (tttEl) tttEl.remove();
+      }, 1500);
+    } else {
+      lose()
+    }
+  }
+
+  function innerEmptyMoves() {
+    const moves = [];
+    for (let r = 1; r <= 3; r++)
+      for (let c = 1; c <= 3; c++)
+        if (B[r][c] === null) moves.push([r, c]);
+    return moves;
+  }
+
+  // --- Win checks ---
+  function winner_3x3(char) {
+    const L = [
+      [[1,1],[1,2],[1,3]], [[2,1],[2,2],[2,3]], [[3,1],[3,2],[3,3]],
+      [[1,1],[2,1],[3,1]], [[1,2],[2,2],[3,2]], [[1,3],[2,3],[3,3]],
+      [[1,1],[2,2],[3,3]], [[1,3],[2,2],[3,1]],
+    ];
+    return L.some(line => line.every(([r,c]) => B[r][c] === char));
+  }
+
+  // O can win if any 3-in-a-row anywhere on 5×5 (sliding windows)
+  function winnerO_5x5_three() {
+    // rows
+    for (let r = 0; r < 5; r++) for (let c = 0; c <= 2; c++)
+      if (B[r][c]==='O' && B[r][c+1]==='O' && B[r][c+2]==='O') return true;
+    // cols
+    for (let c = 0; c < 5; c++) for (let r = 0; r <= 2; r++)
+      if (B[r][c]==='O' && B[r+1][c]==='O' && B[r+2][c]==='O') return true;
+    // diag ↘
+    for (let r = 0; r <= 2; r++) for (let c = 0; c <= 2; c++)
+      if (B[r][c]==='O' && B[r+1][c+1]==='O' && B[r+2][c+2]==='O') return true;
+    // diag ↗
+    for (let r = 2; r < 5; r++) for (let c = 0; c <= 2; c++)
+      if (B[r][c]==='O' && B[r-1][c+1]==='O' && B[r-2][c+2]==='O') return true;
+    return false;
+  }
+
+  // --- Minimax confined to the inner 3×3 ---
+  function minimax(isMax) {
+    if (winner_3x3('X')) return { score: 1, move: null };
+    if (winner_3x3('O')) return { score: -1, move: null };
+
+    const moves = innerEmptyMoves();
+    if (moves.length === 0) return { score: 0, move: null };
+
+    // Seed with the first move so best.move is never null
+    let [r0, c0] = moves[0];
+    let best = { score: isMax ? -Infinity : +Infinity, move: [r0, c0] };
+
+    for (const [r, c] of moves) {
+      B[r][c] = isMax ? 'X' : 'O';
+      const res = minimax(!isMax);
+      B[r][c] = null;
+
+      if (isMax) {
+        if (res.score > best.score) best = { score: res.score, move: [r, c] };
+      } else {
+        if (res.score < best.score) best = { score: res.score, move: [r, c] };
+      }
+    }
+    return best;
+  }
+
+  // If anything weird happens, prefer center, then corners, then edges
+  function fallbackMove() {
+    const pref = [
+      [2,2],                    // center
+      [1,1],[1,3],[3,1],[3,3],  // corners
+      [1,2],[2,1],[2,3],[3,2],  // edges
+    ];
+    for (const [r,c] of pref) if (B[r][c] === null) return [r,c];
+    const moves = innerEmptyMoves();
+    return moves[0] || null;
+  }
+
+  // --- Rendering ---
+  function render() {
+    for (const btn of cells) {
+      const r = +btn.dataset.r, c = +btn.dataset.c;
+      const v = B[r][c];
+
+      btn.textContent = v ?? '';
+
+      if (isInner(r,c)) {
+        btn.disabled = over || busy || v !== null;
+      } else {
+        // outer ring: reveal if user used it
+        if (v === 'O') btn.classList.add('revealed');
+        btn.disabled = over || busy || v !== null;
+      }
+    }
+  }
+
+  // --- Turn flow ---
+  function computerMove() {
+    // No legal move => tie
+    if (innerEmptyMoves().length === 0) {
+      endGame('tie');
+      return;
+    }
+    busy = true;
+    render();
+
+    setTimeout(() => {
+      // Try minimax; always yields a move due to seeding above
+      let { move } = minimax(true);
+      if (!move) move = fallbackMove();
+
+      if (move) {
+        const [rr, cc] = move;
+        B[rr][cc] = 'X';
+      }
+      // Unlock, render, evaluate
+      busy = false;
+      render();
+
+      if (winner_3x3('X')) {
+        endGame('lose');
+        return;
+      }
+      if (innerEmptyMoves().length === 0) {
+        endGame('tie');
+        return;
+      }
+    }, 300 + Math.random() * 500);
+  }
+
+  function userMove(r, c) {
+    if (busy || over) return;
+    if (B[r][c] !== null) return;
+
+    B[r][c] = 'O';
+    render();
+
+    // Hidden win across the 5×5 (3 in a row)
+    if (winnerO_5x5_three()) {
+      endGame('win');
+      return;
+    }
+
+    // If inner is already full after user's move, tie
+    if (innerEmptyMoves().length === 0) {
+      endGame('tie');
+      return;
+    }
+
+    // Computer replies on the inner 3×3 only
+    computerMove();
+  }
+
+  // Wire up all 25 cells (outer is allowed only for user; AI never plays there)
+  cells.forEach(btn => {
+    btn.addEventListener('click', () => {
+      if (busy || over) return;
+      const r = +btn.dataset.r, c = +btn.dataset.c;
+      userMove(r, c);
+    });
+  });
+
+  // Start
+  render();
+})();
+
+(function afciForm() {
+  document.getElementById('afci-form').addEventListener('submit', (e) => {
+    e.preventDefault();
+    const inputEl = document.getElementById('afci-input');
+    const input = inputEl.value.trim().toLowerCase();
+    if (inputEl) inputEl.remove();
+
+    const encoded = b64encodeUTF8(input);
+    if (encoded === 'aGFycHk=' || encoded === 'aGFycGllcw==') {
+      setTimeout(() => {
+        document.querySelectorAll('.row-up-2 img, .row-down-2 img')
+          .forEach(img => img.classList.add('red'));
+        let queensEl = document.getElementById('queens');
+        if (queensEl) queensEl.style.display = 'block';
+        let afciEl = document.getElementById('afci');
+        if (afciEl) afciEl.remove();
+      }, 1500);
+    } else {
+      lose()
+    }
+  });
+})();
+
+(function queens() {
+  const boardEl = document.getElementById('queens-board');
+  const leftEl = document.getElementById('queens-left');
+  const cells = Array.from(boardEl.querySelectorAll('.cell'));
+
+  const state = {
+    placed: new Set(),
+    left: 8,
+    tapTimer: null,
+    lastTapTarget: null,
+    dblTapWindowMs: 300,
+  };
+
+  function keyOf(r, c) { return `${r},${c}`; }
+  function updateStatus() { leftEl.textContent = String(state.left); }
+  function clearEvaluation() {
+    boardEl.classList.remove('valid', 'invalid');
+  }
+
+  function place(cell) {
+    if (!cell || cell.classList.contains('queen')) return;
+    if (state.left <= 0) return;
+    cell.classList.add('queen');
+    state.placed.add(keyOf(+cell.dataset.row, +cell.dataset.col));
+    state.left--;
+    updateStatus();
+    if (state.left === 0) evaluateSolution();
+  }
+
+  function remove(cell) {
+    if (!cell || !cell.classList.contains('queen')) return;
+    cell.classList.remove('queen');
+    state.placed.delete(keyOf(+cell.dataset.row, +cell.dataset.col));
+    if (state.left === 0) clearEvaluation();
+    state.left++;
+    updateStatus();
+  }
+
+  function isNonAttacking(list) {
+    if (list.length !== 8) return false;
+    for (let i = 0; i < list.length; i++) {
+      for (let j = i + 1; j < list.length; j++) {
+        const a = list[i], b = list[j];
+        if (a.r === b.r) return false;
+        if (a.c === b.c) return false;
+        if (Math.abs(a.r - b.r) === Math.abs(a.c - b.c)) return false;
+      }
+    }
+    return true;
+  }
+
+  function evaluateSolution() {
+    const coords = Array.from(state.placed).map(k => {
+      const [r, c] = k.split(',').map(Number);
+      return { r, c };
+    });
+    const ok = isNonAttacking(coords);
+    boardEl.classList.toggle('valid', ok);
+    boardEl.classList.toggle('invalid', !ok);
+
+    if (ok) {
+      setTimeout(() => {
+        document.querySelectorAll('.row-up-3 img, .row-down-3 img')
+          .forEach(img => img.classList.add('red'));
+        let xiEl = document.getElementById('xi');
+        if (xiEl) xiEl.style.display = 'block';
+        let queensEl = document.getElementById('queens');
+        if (queensEl) queensEl.remove();
+      }, 1500);
+    } else {
+      setTimeout(() => {
+        lose()
+      }, 1500)
+    }
+  }
+
+  // Desktop: left-click place, right-click remove
+  boardEl.addEventListener('mousedown', (e) => {
+    const cell = e.target.closest('.cell');
+    if (!cell) return;
+    if (e.button === 0) {
+      place(cell);
+    } else if (e.button === 2) {
+      remove(cell);
+    }
+  });
+  boardEl.addEventListener('contextmenu', (e) => e.preventDefault());
+
+  // Mobile: tap to place, double-tap same cell within window to remove
+  boardEl.addEventListener('touchend', (e) => {
+    const cell = e.target.closest('.cell');
+    if (!cell) return;
+
+    e.preventDefault();
+
+    if (state.lastTapTarget === cell && state.tapTimer) {
+      clearTimeout(state.tapTimer);
+      state.tapTimer = null;
+      state.lastTapTarget = null;
+      remove(cell);
+      return;
+    }
+
+    state.lastTapTarget = cell;
+    state.tapTimer = setTimeout(() => {
+      place(cell);
+      state.tapTimer = null;
+      state.lastTapTarget = null;
+    }, state.dblTapWindowMs);
+  }, { passive: false });
+
+  updateStatus();
+})();
+
+(function xiForm() {
+  document.getElementById('xi-form').addEventListener('submit', (e) => {
+    e.preventDefault();
+    const inputEl = document.getElementById('xi-input');
+    const input = inputEl.value.trim().toLowerCase();
+    if (inputEl) inputEl.remove();
+
+    const encoded = b64encodeUTF8(input);
+    if (encoded === 'ZmlyZWZpZ2h0ZXI=' || encoded === 'ZmlyZWZpZ2h0ZXJz' || encoded === 'ZmlyZSBmaWdodGVy' || encoded === 'ZmlyZSBmaWdodGVycw==') {
+      setTimeout(() => {
+        document.querySelectorAll('.row-up-4 img, .row-down-4 img')
+          .forEach(img => img.classList.add('red'));
+        let magic5El = document.getElementById('magic5');
+        if (magic5El) magic5El.style.display = 'block';
+        let xiEl = document.getElementById('xi');
+        if (xiEl) xiEl.remove();
+      }, 1500);
+    } else {
+      lose()
+    }
+  });
+})();
+
+(function magic5() {
+  const root = document.getElementById('magic5');
+  const board = document.getElementById('magic5-board');
+  const inputs = Array.from(board.querySelectorAll('input[type="number"]'));
+  const submitBtn = document.getElementById('magic5-submit');
+  const clearBtn = document.getElementById('magic5-clear');
+
+  const N = 5;
+  const MAGIC = N * (N * N + 1) / 2; // 65 for 5x5
+
+  function moveFocus(r, c) {
+    const target = board.querySelector(`input[data-r="${r}"][data-c="${c}"]`);
+    if (target) target.focus();
+  }
+
+  /**
+   * Reads the DOM and returns a 2D array of numbers.
+   */
+  function getGrid() {
+    const grid = Array.from({ length: N }, () => Array(N).fill(null));
+    inputs.forEach(inp => {
+      const r = +inp.dataset.r;
+      const c = +inp.dataset.c;
+      const v = inp.value === '' ? null : Number(inp.value);
+      grid[r][c] = v;
+    });
+    return grid;
+  }
+
+  /**
+   * Calculates all row and column sums and displays them on the board.
+   */
+  function updateSums() {
+    const grid = getGrid();
+    // Calculate and display row sums
+    for (let r = 0; r < N; r++) {
+      const sum = grid[r].reduce((acc, val) => acc + (val || 0), 0);
+      const sumCell = board.querySelector(`[data-row-sum="${r}"]`);
+      if (sumCell) sumCell.textContent = sum;
+    }
+    // Calculate and display column sums
+    for (let c = 0; c < N; c++) {
+      let sum = 0;
+      for (let r = 0; r < N; r++) {
+        sum += (grid[r][c] || 0);
+      }
+      const sumCell = board.querySelector(`[data-col-sum="${c}"]`);
+      if (sumCell) sumCell.textContent = sum;
+    }
+  }
+
+  /**
+   * Handles real-time input events for validation and sum updates.
+   */
+  board.addEventListener('input', (e) => {
+    // Make sure the event came from one of our number inputs
+    if (e.target.matches('input[type="number"]')) {
+      const input = e.target;
+      const value = Number(input.value);
+
+      // Requirement: Immediately reject any number outside the 1-25 range.
+      if (input.value !== '' && (!Number.isInteger(value) || value < 1 || value > 25)) {
+        input.value = ''; // Clear the invalid input
+      }
+
+      // Requirement: Update sums whenever a value changes.
+      updateSums();
+    }
+  });
+
+  /**
+   * Handles arrow key movement.
+   */
+  inputs.forEach(inp => {
+    inp.addEventListener('keydown', (e) => {
+      const r = +inp.dataset.r;
+      const c = +inp.dataset.c;
+
+      switch (e.key) {
+        case "ArrowUp":
+          e.preventDefault();
+          if (r > 0) moveFocus(r - 1, c);
+          break;
+        case "ArrowDown":
+          e.preventDefault();
+          if (r < N - 1) moveFocus(r + 1, c);
+          break;
+        case "ArrowLeft":
+          e.preventDefault();
+          if (c > 0) moveFocus(r, c - 1);
+          break;
+        case "ArrowRight":
+          e.preventDefault();
+          if (c < N - 1) moveFocus(r, c + 1);
+          break;
+      }
+    });
+  });
+
+  function resetVisuals() {
+    inputs.forEach(inp => inp.classList.remove('dup', 'out-of-range', 'empty'));
+  }
+
+  function validate() {
+    resetVisuals();
+
+    // Basic checks: filled, uniqueness (range is already handled live)
+    let ok = true;
+    const seen = new Map(); // value -> input list
+    for (const inp of inputs) {
+      if (inp.value === '') {
+        inp.classList.add('empty');
+        ok = false;
+      } else {
+        const v = Number(inp.value);
+        if (!seen.has(v)) seen.set(v, []);
+        seen.get(v).push(inp);
+      }
+    }
+    // duplicates
+    for (const [v, arr] of seen.entries()) {
+      if (arr.length > 1) {
+        ok = false;
+        arr.forEach(inp => inp.classList.add('dup'));
+      }
+    }
+
+    if (!ok) {
+      return false;
+    }
+
+    // Sum checks
+    const grid = getGrid();
+    let isMagic = true;
+
+    for (let r = 0; r < N; r++) { // rows
+      if (grid[r].reduce((a, b) => a + b, 0) !== MAGIC) isMagic = false;
+    }
+    for (let c = 0; c < N; c++) { // cols
+      let s = 0;
+      for (let r = 0; r < N; r++) s += grid[r][c];
+      if (s !== MAGIC) isMagic = false;
+    }
+    let s1 = 0, s2 = 0; // diagonals
+    for (let i = 0; i < N; i++) {
+      s1 += grid[i][i];
+      s2 += grid[i][N - 1 - i];
+    }
+    if (s1 !== MAGIC || s2 !== MAGIC) isMagic = false;
+
+
+    if (!isMagic) {
+      return false;
+    }
+
+    return true;
+  }
+
+  // Submit button
+  submitBtn.addEventListener('click', (e) => {
+    e.preventDefault();
+
+    const extraCells = board.querySelectorAll('.sum-cell, .corner');
+    extraCells.forEach(cell => cell.remove());
+    board.classList.add('submitted');
+    inputs.forEach(inp => inp.disabled = true);
+    submitBtn.disabled = true;
+    clearBtn.disabled = true;
+
+    let won = validate();
+    if (won) {
+      setTimeout(() => {
+        document.querySelectorAll('.row-up-5 img, .row-down-5 img')
+          .forEach(img => img.classList.add('red'));
+        let ploxEl = document.getElementById('plox');
+        if (ploxEl) ploxEl.style.display = 'block';
+        let magic5El = document.getElementById('magic5');
+        if (magic5El) magic5El.remove();
+      }, 1500);
+    } else {
+      setTimeout(() => {
+        lose()
+      }, 1500);
+    }
+  });
+
+  // Clear board
+  clearBtn.addEventListener('click', () => {
+    inputs.forEach(inp => { inp.value = ''; });
+    resetVisuals();
+    updateSums(); // Also reset the sums on the board
+  });
+
+  // Initialize sums to 0 on page load
+  updateSums();
+})();
+
+(function ploxForm() {
+  document.getElementById('plox-form').addEventListener('submit', (e) => {
+    e.preventDefault();
+    const inputEl = document.getElementById('plox-input');
+    const input = inputEl.value.trim().toLowerCase();
+    if (inputEl) inputEl.remove();
+
+    const encoded = b64encodeUTF8(input);
+    if (encoded === 'cXVpbmU=') {
+      setTimeout(() => {
+        document.querySelectorAll('.row-up-6 img, .row-down-6 img')
+          .forEach(img => img.classList.add('red'));
+        let lastEl = document.getElementById('last');
+        if (lastEl) lastEl.style.display = 'block';
+        let ploxEl = document.getElementById('plox');
+        if (ploxEl) ploxEl.remove();
+      }, 1500);
+    } else {
+      lose()
+    }
+  });
+})();
+
+(function lastKnm() {
+  const SEQ = [
+    "ArrowUp","ArrowUp","ArrowDown","ArrowDown",
+    "ArrowLeft","ArrowRight","ArrowLeft","ArrowRight",
+    "KeyB","KeyA","Start"
+  ];
+
+   const squares = Array.from(document.querySelectorAll('#knm .sq'));
+  let ix = 0;
+  let anyWrongThisRound = false;
+  let failures = 0;
+
+  function resetRound() {
+    ix = 0;
+    anyWrongThisRound = false;
+    squares.forEach(sq => sq.classList.remove('ok','bad'));
+  }
+
+  function isTypingContext(el) {
+    return !!el && (
+      el.isContentEditable ||
+      /^(INPUT|TEXTAREA|SELECT|BUTTON)$/i.test(el.tagName)
+    );
+  }
+
+  function handleKey(e) {
+    const inTyping = isTypingContext(e.target);
+    let code = e.code;        // e.g. "ArrowUp", "KeyA", "Enter", "Space"
+    let key  = e.key;         // in case old browsers report Space differently
+
+    // Map Enter/Space to "Start"
+    if (code === "Enter" || code === "Space" || key === " " || key === "Spacebar") {
+      code = "Start";
+    }
+
+    if (inTyping) {
+      return;
+    }
+
+    // Only care about keys that could plausibly be part of the sequence,
+    // but still allow other keys to count as "wrong" for the current step.
+    // Prevent default for arrows and Space to avoid page scroll.
+    if (
+      code === "ArrowUp" || code === "ArrowDown" || code === "ArrowLeft" || code === "ArrowRight" ||
+      code === "KeyA" || code === "KeyB" || code === "Start"
+    ) {
+      if (code.startsWith("Arrow") || code === "Start") e.preventDefault();
+    }
+
+    // Ignore key repeats
+    if (e.repeat) return;
+
+    // If we've already filled 11 squares (shouldn't happen without a reset), ignore.
+    if (ix >= SEQ.length) return;
+
+    const expect = SEQ[ix];
+    const correct = (code === expect);
+
+    squares[ix].classList.add(correct ? 'ok' : 'bad');
+    if (!correct) anyWrongThisRound = true;
+
+    ix++;
+
+    if (ix === SEQ.length) {
+      if (!anyWrongThisRound) {
+        // Success!
+        document.querySelectorAll('.row-up-7 img, .row-down-7 img')
+          .forEach(img => img.classList.add('red'));
+        let lastEl = document.getElementById('last');
+        if (lastEl) lastEl.remove();
+        win();
+      } else {
+        // Failure for this round
+        failures++;
+        if (failures >= 3) {
+          try { lose(); } catch (_) {}
+        } else {
+          // Brief pause so the user can see the red marks, then reset
+          setTimeout(resetRound, 350);
+        }
+      }
+    }
+  }
+
+  window.addEventListener('keydown', handleKey, { passive: false });
+})();
+</script>

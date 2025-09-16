@@ -11,7 +11,15 @@
   </div>
 
   <div class="posts">
-    Nothing here yet!
+    <ul>
+      {% for page in section.pages | sort(attribute="date") | reverse %}
+
+        <li class="tag-list">
+          <a href={{ page.permalink | safe }}>{{ page.title }}</a>
+        </li>
+
+      {% endfor %}
+    </ul>
   </div>
 
 {% endblock content %}

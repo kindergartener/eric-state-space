@@ -15,13 +15,11 @@
   </div>
 </div>
 
-<div class="posts">
-  {{ post_macros::post_list(
-      pages=term.pages,
-      summary_words=config.extra.summary_fallback_words | default(value=60),
-      class="posts",
-      tags_sep=""
-  ) }}
-</div>
+{{ post_macros::post_list(
+    pages=term.pages,
+    summary_words=config.extra.summary_fallback_words | default(value=60),
+    class="posts",
+    tags_sep=""
+) }}
 
 {% endblock content %}

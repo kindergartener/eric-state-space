@@ -4,7 +4,8 @@
   font-style: normal;
   font-display: swap;
   src:
-    local("Fira Sans"),
+    local("Fira Sans Regular"),
+    local("FiraSans-Regular"),
     url("/fonts/FiraSans-Regular.ttf") format("truetype");
   font-feature-settings: "locl";
 }
@@ -16,6 +17,7 @@
   font-display: swap;
   src:
     local("Fira Sans Bold"),
+    local("FiraSans-Bold"),
     url("/fonts/FiraSans-Bold.ttf") format("truetype");
   font-feature-settings: "locl";
 }
@@ -27,6 +29,7 @@
   font-display: swap;
   src:
     local("Fira Sans Italic"),
+    local("FiraSans-Italic"),
     url("/fonts/FiraSans-Italic.ttf") format("truetype");
   font-feature-settings: "locl";
 }

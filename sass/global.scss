@@ -13,7 +13,6 @@ html {
   margin: 0;
   padding: 0;
   box-sizing: inherit;
-  font: inherit;
   color: inherit;
 }
 
@@ -30,6 +29,7 @@ body {
   background: $color-bg;
   color: $color-text;
   overflow-x: hidden;
+  overscroll-behavior: contain;
   min-height: 100vh;
 }
 
@@ -227,6 +227,10 @@ figure {
   @media (max-width: $phone-max-width) {
     margin-bottom: $spacing-150;
     padding: 0 $spacing-100;
+
+    .socials {
+      justify-content: center;
+    }
   }
 }
 
