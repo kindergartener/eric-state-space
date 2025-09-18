@@ -1,3 +1,7 @@
+<div class="controls">
+  <input id="gridSize" type="number" value="16" min="2" max="256" step="1">
+</div>
+
 <div class="canvas-container">
   <canvas id="canvas"></canvas>
 </div>
@@ -14,6 +18,25 @@
       linear-gradient(to right, #222 1px, transparent 1px),
       linear-gradient(to bottom, #222 1px, transparent 1px);
     background-size: 40px 40px;
+    background-position: 50% 50%;
+  }
+
+  .controls {
+    position: fixed;
+    top: 10px;
+    left: 10px;
+  }
+  .controls input[type="number"] {
+    background: #222;
+    font-family: "Departure Mono";
+    font-size: 11px;
+    color: white;
+    appearance: textfield;
+    border: 1px solid #444;
+  }
+  .controls input[type="number"]::-webkit-inner-spin-button,
+  .controls input[type="number"]::-webkit-outer-spin-button {
+    background: none;
   }
 
   .canvas-container {
@@ -29,8 +52,8 @@
 </style>
 
 <script>
-// Vertex shader
-const vertexShaderSource = `
+  // Vertex shader
+  const vertexShaderSource = `
 attribute vec2 a_position;
 uniform float u_time;
 uniform float u_excitement;
@@ -114,13 +137,13 @@ void main() {
     // Surface displacement using multiple noise layers
     float noiseScale1 = turbulence(vec2(theta * 2.0, phi * 2.0), u_time * 0.5);
     float noiseScale2 = turbulence(vec2(theta * 3.0, phi * 3.0), u_time * 0.8);
-    float noiseScale3 = snoise(vec2(theta * 8.0 + u_time, phi * 8.0));
+    float noiseScale3 = snoise(vec2(theta * 4.0 + u_time, phi * 4.0));
     
     // Combine noise with excitement
     float displacement = 0.1 * noiseScale1 * (1.0 + u_excitement * 2.0) +
                         0.05 * noiseScale2 * (1.0 + u_excitement) +
                         0.02 * noiseScale3 +
-                        0.3 * clickInfluence * sin(u_time * 20.0 - distance(sphereUV, u_clickPos) * 10.0);
+                        0.5 * clickInfluence * sin(u_time * 20.0 - distance(sphereUV, u_clickPos) * 10.0);
     
     // Apply displacement
     float radius = baseRadius + displacement;
@@ -170,8 +193,8 @@ void main() {
 }
 `;
 
-// Fragment shader with Bayer dithering
-const fragmentShaderSource = `
+  // Fragment shader with Bayer dithering
+  const fragmentShaderSource = `
 precision highp float;
 
 varying vec3 v_color;
@@ -277,192 +300,215 @@ void main() {
 }
 `;
 
-// WebGL setup
-const canvas = document.getElementById('canvas');
-const gl = canvas.getContext('webgl');
+  // WebGL setup
+  const canvas = document.getElementById('canvas');
+  const gl = canvas.getContext('webgl');
 
-if (!gl) {
+  if (!gl) {
     alert('WebGL not supported!');
-}
+  }
 
-// Compile shader function
-function createShader(gl, type, source) {
+  // Compile shader function
+  function createShader(gl, type, source) {
     const shader = gl.createShader(type);
     gl.shaderSource(shader, source);
     gl.compileShader(shader);
-    
-    if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
-        console.error('Shader compile error:', gl.getShaderInfoLog(shader));
-        gl.deleteShader(shader);
-        return null;
-    }
-    
-    return shader;
-}
 
-// Create program function
-function createProgram(gl, vertexShader, fragmentShader) {
+    if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
+      console.error('Shader compile error:', gl.getShaderInfoLog(shader));
+      gl.deleteShader(shader);
+      return null;
+    }
+
+    return shader;
+  }
+
+  // Create program function
+  function createProgram(gl, vertexShader, fragmentShader) {
     const program = gl.createProgram();
     gl.attachShader(program, vertexShader);
     gl.attachShader(program, fragmentShader);
     gl.linkProgram(program);
-    
+
     if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
-        console.error('Program link error:', gl.getProgramInfoLog(program));
-        gl.deleteProgram(program);
-        return null;
+      console.error('Program link error:', gl.getProgramInfoLog(program));
+      gl.deleteProgram(program);
+      return null;
     }
-    
+
     return program;
-}
+  }
 
-// Create shaders and program
-const vertexShader = createShader(gl, gl.VERTEX_SHADER, vertexShaderSource);
-const fragmentShader = createShader(gl, gl.FRAGMENT_SHADER, fragmentShaderSource);
-const program = createProgram(gl, vertexShader, fragmentShader);
+  // Create shaders and program
+  const vertexShader = createShader(gl, gl.VERTEX_SHADER, vertexShaderSource);
+  const fragmentShader = createShader(gl, gl.FRAGMENT_SHADER, fragmentShaderSource);
+  const program = createProgram(gl, vertexShader, fragmentShader);
 
-// Get locations
-const positionAttributeLocation = gl.getAttribLocation(program, 'a_position');
-const timeUniformLocation = gl.getUniformLocation(program, 'u_time');
-const excitementUniformLocation = gl.getUniformLocation(program, 'u_excitement');
-const clickPosUniformLocation = gl.getUniformLocation(program, 'u_clickPos');
-const clickTimeUniformLocation = gl.getUniformLocation(program, 'u_clickTime');
-const projectionUniformLocation = gl.getUniformLocation(program, 'u_projection');
-const modelViewUniformLocation = gl.getUniformLocation(program, 'u_modelView');
-const resolutionUniformLocation = gl.getUniformLocation(program, 'u_resolution');
-const cameraPosUniformLocation = gl.getUniformLocation(program, 'u_cameraPos');
-const ditherCellPxUniformLocation = gl.getUniformLocation(program, 'u_ditherCellPx');
+  // Get locations
+  const positionAttributeLocation = gl.getAttribLocation(program, 'a_position');
+  const timeUniformLocation = gl.getUniformLocation(program, 'u_time');
+  const excitementUniformLocation = gl.getUniformLocation(program, 'u_excitement');
+  const clickPosUniformLocation = gl.getUniformLocation(program, 'u_clickPos');
+  const clickTimeUniformLocation = gl.getUniformLocation(program, 'u_clickTime');
+  const projectionUniformLocation = gl.getUniformLocation(program, 'u_projection');
+  const modelViewUniformLocation = gl.getUniformLocation(program, 'u_modelView');
+  const resolutionUniformLocation = gl.getUniformLocation(program, 'u_resolution');
+  const cameraPosUniformLocation = gl.getUniformLocation(program, 'u_cameraPos');
+  const ditherCellPxUniformLocation = gl.getUniformLocation(program, 'u_ditherCellPx');
 
-// Create sphere mesh
-const gridSize = 16;
-const vertices = [];
-const indices = [];
+  // Create buffers
+  const positionBuffer = gl.createBuffer();
+  const indexBuffer = gl.createBuffer();
+  // Create sphere mesh
+  let gridSize = 16;
+  function buildSphereMesh(size) {
+    const vertices = [];
+    const indices = [];
 
-for (let i = 0; i <= gridSize; i++) {
-    for (let j = 0; j <= gridSize; j++) {
-        vertices.push(i / gridSize, j / gridSize);
+    for (let i = 0; i <= size; i++) {
+      for (let j = 0; j <= size; j++) {
+        vertices.push(i / size, j / size);
+      }
     }
-}
 
-for (let i = 0; i < gridSize; i++) {
-    for (let j = 0; j < gridSize; j++) {
-        const a = i * (gridSize + 1) + j;
+    for (let i = 0; i < size; i++) {
+      for (let j = 0; j < size; j++) {
+        const a = i * (size + 1) + j;
         const b = a + 1;
-        const c = a + gridSize + 1;
+        const c = a + size + 1;
         const d = c + 1;
-        
+
         indices.push(a, b, c);
         indices.push(b, d, c);
+      }
     }
-}
 
-// Create buffers
-const positionBuffer = gl.createBuffer();
-gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
-gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
+    // Update buffers
+    gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
+    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
+    gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(indices), gl.STATIC_DRAW);
 
-const indexBuffer = gl.createBuffer();
-gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
-gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(indices), gl.STATIC_DRAW);
+    return indices.length;
+  }
 
-// Matrix helpers
-function createProjectionMatrix(fov, aspect, near, far) {
+  let indexCount = buildSphereMesh(gridSize);
+
+
+  // Matrix helpers
+  function createProjectionMatrix(fov, aspect, near, far) {
     const f = 1.0 / Math.tan(fov / 2);
     const rangeInv = 1 / (near - far);
-    
-    return new Float32Array([
-        f / aspect, 0, 0, 0,
-        0, f, 0, 0,
-        0, 0, (near + far) * rangeInv, -1,
-        0, 0, near * far * rangeInv * 2, 0
-    ]);
-}
 
-function createModelViewMatrix(rotation) {
+    return new Float32Array([
+      f / aspect, 0, 0, 0,
+      0, f, 0, 0,
+      0, 0, (near + far) * rangeInv, -1,
+      0, 0, near * far * rangeInv * 2, 0
+    ]);
+  }
+
+  function createModelViewMatrix(rotation) {
     const c = Math.cos(rotation);
     const s = Math.sin(rotation);
     const distance = 8.0;
-    
+
     return new Float32Array([
-        c, 0, s, 0,
-        0, 1, 0, 0,
-        -s, 0, c, 0,
-        0, 0, -distance, 1
+      c, 0, s, 0,
+      0, 1, 0, 0,
+      -s, 0, c, 0,
+      0, 0, -distance, 1
     ]);
-}
+  }
 
-// Interaction state
-let excitement = 0.3;
-let targetExcitement = 0.3;
-let clickPos = [0, 0];
-let clickTime = 0;
+  // Interaction state
+  let excitement = 0.3;
+  let targetExcitement = 0.3;
+  let clickPos = [0, 0];
+  let clickTime = 0;
 
-// Handle clicks/taps
-function handleInteraction(event) {
+  // Handle clicks/taps
+  function handleInteraction(event) {
     event.preventDefault();
-    
+
     const rect = canvas.getBoundingClientRect();
     const x = (event.clientX || event.touches[0].clientX) - rect.left;
     const y = (event.clientY || event.touches[0].clientY) - rect.top;
-    
+
     // Convert to UV coordinates on sphere
     clickPos[0] = x / rect.width;
     clickPos[1] = y / rect.height;
-    
+
     // Get excited!
     targetExcitement = Math.min(1.0, targetExcitement + 0.5);
     clickTime = performance.now() * 0.001;
-}
-
-canvas.addEventListener('mousedown', handleInteraction);
-canvas.addEventListener('touchstart', handleInteraction);
-
-function resizeCanvas() {
-  let screenW = window.visualViewport ? window.visualViewport.width : window.innerWidth;
-  let screenH = window.visualViewport ? window.visualViewport.height : window.innerHeight;
-
-  const scale = (screenW < 768) ? 0.75 : 1.0;
-  const aspect = 1 / 1;
-
-  let width = screenW * scale;
-  let height = screenH * scale;
-
-  if (width / height > aspect) {
-    width = height * aspect;
-  } else {
-    height = width / aspect;
   }
 
-  canvas.width = Math.floor(width);
-  canvas.height = Math.floor(height);
-  gl.viewport(0, 0, canvas.width, canvas.height);
-}
+  canvas.addEventListener('mousedown', handleInteraction);
+  canvas.addEventListener('touchstart', handleInteraction);
 
-// Animation loop
-function render(time) {
+  function resizeCanvas() {
+    let screenW = window.visualViewport ? window.visualViewport.width : window.innerWidth;
+    let screenH = window.visualViewport ? window.visualViewport.height : window.innerHeight;
+
+    const scale = (screenW < 768) ? 0.75 : 1.0;
+    const aspect = 1 / 1;
+
+    let width = screenW * scale;
+    let height = screenH * scale;
+
+    if (width / height > aspect) {
+      width = height * aspect;
+    } else {
+      height = width / aspect;
+    }
+
+    canvas.width = Math.floor(width);
+    canvas.height = Math.floor(height);
+    gl.viewport(0, 0, canvas.width, canvas.height);
+  }
+
+  window.addEventListener("resize", resizeCanvas);
+  window.addEventListener("orientationchange", resizeCanvas);
+  resizeCanvas();
+
+  const gridSizeInput = document.getElementById('gridSize');
+  function updateUserInputs() {
+    const size = parseInt(gridSizeInput.value, 10) || 16;
+    if (size !== gridSize) {
+      gridSize = size;
+      indexCount = buildSphereMesh(gridSize);
+    }
+  }
+
+  window.addEventListener("input", updateUserInputs);
+  updateUserInputs();
+
+  // Animation loop
+  function render(time) {
     time *= 0.001; // Convert to seconds
-    
+
     // Update excitement (smooth decay)
     excitement += (targetExcitement - excitement) * 0.1;
     targetExcitement *= 0.99; // Gradual calm down
     targetExcitement = Math.max(0.3, targetExcitement); // Minimum excitement
-    
+
     // Resize canvas
     resizeCanvas();
     gl.viewport(0, 0, canvas.width, canvas.height);
-    
+
     // Clear
     gl.clearColor(0.0, 0.0, 0.0, 0.0);
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-    
+
     // Enable depth test
     gl.enable(gl.DEPTH_TEST);
     gl.enable(gl.CULL_FACE);
     gl.cullFace(gl.BACK);
-    
+
     // Use program
     gl.useProgram(program);
-    
+
     // Set uniforms
     gl.uniform1f(timeUniformLocation, time);
     gl.uniform1f(excitementUniformLocation, excitement);
@@ -470,43 +516,40 @@ function render(time) {
     gl.uniform1f(clickTimeUniformLocation, clickTime);
     gl.uniform2f(resolutionUniformLocation, canvas.width, canvas.height);
     gl.uniform1f(ditherCellPxUniformLocation, 32.0);
-    
+
     // Camera position
     const cameraDistance = 8.0;
     const cameraAngle = time * 0.25;
-    gl.uniform3f(cameraPosUniformLocation, 
-        Math.sin(cameraAngle) * cameraDistance,
-        2.0,
-        Math.cos(cameraAngle) * cameraDistance
+    gl.uniform3f(cameraPosUniformLocation,
+      Math.sin(cameraAngle) * cameraDistance,
+      2.0,
+      Math.cos(cameraAngle) * cameraDistance
     );
-    
+
     // Matrices
     const projectionMatrix = createProjectionMatrix(
-        Math.PI / 4,
-        canvas.width / canvas.height,
-        0.1,
-        100
+      Math.PI / 4,
+      canvas.width / canvas.height,
+      0.1,
+      100
     );
     const modelViewMatrix = createModelViewMatrix(time * 0.2);
-    
+
     gl.uniformMatrix4fv(projectionUniformLocation, false, projectionMatrix);
     gl.uniformMatrix4fv(modelViewUniformLocation, false, modelViewMatrix);
-    
+
     // Bind attributes
     gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
     gl.enableVertexAttribArray(positionAttributeLocation);
     gl.vertexAttribPointer(positionAttributeLocation, 2, gl.FLOAT, false, 0, 0);
-    
+
     // Draw
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
-    gl.drawElements(gl.TRIANGLES, indices.length, gl.UNSIGNED_SHORT, 0);
-    
-    requestAnimationFrame(render);
-}
+    gl.drawElements(gl.TRIANGLES, indexCount, gl.UNSIGNED_SHORT, 0);
 
-// Start animation
-render(0);
-window.addEventListener("resize", resizeCanvas);
-window.addEventListener("orientationchange", resizeCanvas);
-resizeCanvas();
+    requestAnimationFrame(render);
+  }
+
+  // Start animation
+  render(0);
 </script>
