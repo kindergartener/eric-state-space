@@ -1,0 +1,512 @@
+<div class="canvas-container">
+  <canvas id="canvas"></canvas>
+</div>
+
+<style>
+  body {
+    overflow: hidden;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    place-content: center;
+    background-color: black;
+    background-image:
+      linear-gradient(to right, #222 1px, transparent 1px),
+      linear-gradient(to bottom, #222 1px, transparent 1px);
+    background-size: 40px 40px;
+  }
+
+  .canvas-container {
+    display: flex;
+    margin: 0;
+    place-content: center;
+    overflow: hidden;
+  }
+
+  canvas {
+    display: block;
+  }
+</style>
+
+<script>
+// Vertex shader
+const vertexShaderSource = `
+attribute vec2 a_position;
+uniform float u_time;
+uniform float u_excitement;
+uniform vec2 u_clickPos;
+uniform float u_clickTime;
+uniform mat4 u_projection;
+uniform mat4 u_modelView;
+
+varying vec3 v_color;
+varying vec3 v_normal;
+varying vec2 v_screenPos;
+varying vec3 v_worldPos;
+
+// Simplex noise for organic movement
+vec3 mod289(vec3 x) { return x - floor(x * (1.0 / 289.0)) * 289.0; }
+vec2 mod289(vec2 x) { return x - floor(x * (1.0 / 289.0)) * 289.0; }
+vec3 permute(vec3 x) { return mod289(((x*34.0)+1.0)*x); }
+
+float snoise(vec2 v) {
+    const vec4 C = vec4(0.211324865405187,  // (3.0-sqrt(3.0))/6.0
+                        0.366025403784439,  // 0.5*(sqrt(3.0)-1.0)
+                        -0.577350269189626, // -1.0 + 2.0 * C.x
+                        0.024390243902439); // 1.0 / 41.0
+    vec2 i  = floor(v + dot(v, C.yy));
+    vec2 x0 = v -   i + dot(i, C.xx);
+    vec2 i1;
+    i1 = (x0.x > x0.y) ? vec2(1.0, 0.0) : vec2(0.0, 1.0);
+    vec4 x12 = x0.xyxy + C.xxzz;
+    x12.xy -= i1;
+    i = mod289(i);
+    vec3 p = permute(permute(i.y + vec3(0.0, i1.y, 1.0))
+            + i.x + vec3(0.0, i1.x, 1.0));
+    vec3 m = max(0.5 - vec3(dot(x0,x0), dot(x12.xy,x12.xy), dot(x12.zw,x12.zw)), 0.0);
+    m = m*m;
+    m = m*m;
+    vec3 x = 2.0 * fract(p * C.www) - 1.0;
+    vec3 h = abs(x) - 0.5;
+    vec3 ox = floor(x + 0.5);
+    vec3 a0 = x - ox;
+    m *= 1.79284291400159 - 0.85373472095314 * (a0*a0 + h*h);
+    vec3 g;
+    g.x  = a0.x  * x0.x  + h.x  * x0.y;
+    g.yz = a0.yz * x12.xz + h.yz * x12.yw;
+    return 130.0 * dot(m, g);
+}
+
+// Multi-octave noise for complex surface
+float turbulence(vec2 p, float time) {
+    float value = 0.0;
+    float amplitude = 1.0;
+    float frequency = 1.0;
+    
+    for(int i = 0; i < 4; i++) {
+        value += amplitude * snoise(p * frequency + time);
+        amplitude *= 0.5;
+        frequency *= 2.0;
+    }
+    
+    return value;
+}
+
+void main() {
+    // Sphere parameterization
+    float theta = a_position.x * 3.14159265359 * 2.0;
+    float phi = a_position.y * 3.14159265359;
+    
+    vec3 spherePos = vec3(
+        sin(phi) * cos(theta),
+        cos(phi),
+        sin(phi) * sin(theta)
+    );
+    
+    // Base radius with global pulsing
+    float baseRadius = 2.0 + 0.1 * sin(u_time * 2.0) * u_excitement;
+    
+    // Calculate distance-based excitement from click position
+    vec2 sphereUV = vec2(theta / (2.0 * 3.14159265359), phi / 3.14159265359);
+    float clickInfluence = exp(-distance(sphereUV, u_clickPos) * 3.0) * 
+                          exp(-(u_time - u_clickTime) * 2.0);
+    
+    // Surface displacement using multiple noise layers
+    float noiseScale1 = turbulence(vec2(theta * 2.0, phi * 2.0), u_time * 0.5);
+    float noiseScale2 = turbulence(vec2(theta * 3.0, phi * 3.0), u_time * 0.8);
+    float noiseScale3 = snoise(vec2(theta * 8.0 + u_time, phi * 8.0));
+    
+    // Combine noise with excitement
+    float displacement = 0.1 * noiseScale1 * (1.0 + u_excitement * 2.0) +
+                        0.05 * noiseScale2 * (1.0 + u_excitement) +
+                        0.02 * noiseScale3 +
+                        0.3 * clickInfluence * sin(u_time * 20.0 - distance(sphereUV, u_clickPos) * 10.0);
+    
+    // Apply displacement
+    float radius = baseRadius + displacement;
+    vec3 position = spherePos * radius;
+    
+    // Calculate normal using neighboring points
+    float delta = 0.01;
+    vec3 neighborTheta = vec3(
+        sin(phi) * cos(theta + delta),
+        cos(phi),
+        sin(phi) * sin(theta + delta)
+    );
+    vec3 neighborPhi = vec3(
+        sin(phi + delta) * cos(theta),
+        cos(phi + delta),
+        sin(phi + delta) * sin(theta)
+    );
+    
+    // Apply same displacement calculation to neighbors (simplified)
+    float noiseTheta = turbulence(vec2((theta + delta) * 2.0, phi * 2.0), u_time * 0.5);
+    float noisePhi = turbulence(vec2(theta * 2.0, (phi + delta) * 2.0), u_time * 0.5);
+    
+    neighborTheta *= baseRadius + 0.1 * noiseTheta * (1.0 + u_excitement * 2.0);
+    neighborPhi *= baseRadius + 0.1 * noisePhi * (1.0 + u_excitement * 2.0);
+    
+    // Calculate normal
+    vec3 tangentTheta = neighborTheta - position;
+    vec3 tangentPhi = neighborPhi - position;
+    v_normal = normalize(cross(tangentTheta, tangentPhi));
+    
+    // Ferrofluid-like metallic color
+    float metallic = 0.5 + 0.5 * sin(noiseScale1 * 3.0);
+    v_color = vec3(
+        0.1 + 0.1 * metallic,
+        0.1 + 0.15 * metallic,
+        0.15 + 0.3 * metallic
+    ) * (1.0 + clickInfluence * 0.5);
+    
+    // Add iridescence based on view angle
+    v_worldPos = position;
+    
+    // Transform to screen space
+    vec4 mvPosition = u_modelView * vec4(position, 1.0);
+    vec4 projectedPos = u_projection * mvPosition;
+    gl_Position = projectedPos;
+    v_screenPos = projectedPos.xy;
+}
+`;
+
+// Fragment shader with Bayer dithering
+const fragmentShaderSource = `
+precision highp float;
+
+varying vec3 v_color;
+varying vec3 v_normal;
+varying vec2 v_screenPos;
+varying vec3 v_worldPos;
+
+uniform vec2 u_resolution;
+uniform vec3 u_cameraPos;
+uniform float u_time;
+uniform float u_excitement;
+uniform float u_ditherCellPx;
+
+// 16x16 Bayer matrix
+float bayer16x16(vec2 pos) {
+    const mat4 bayer4x4 = mat4(
+        0.0/16.0,  8.0/16.0,  2.0/16.0, 10.0/16.0,
+        12.0/16.0, 4.0/16.0, 14.0/16.0,  6.0/16.0,
+        3.0/16.0, 11.0/16.0,  1.0/16.0,  9.0/16.0,
+        15.0/16.0, 7.0/16.0, 13.0/16.0,  5.0/16.0
+    );
+    
+    int x = int(mod(pos.x, 8.0));
+    int y = int(mod(pos.y, 8.0));
+    
+    int quadX = x / 4;
+    int quadY = y / 4;
+    float quadOffset = float(quadY * 2 + quadX) / 16.0;
+    
+    int localX = int(mod(float(x), 4.0));
+    int localY = int(mod(float(y), 4.0));
+    
+    float baseValue = 0.0;
+    if (localY == 0) {
+        if (localX == 0) baseValue = bayer4x4[0][0];
+        else if (localX == 1) baseValue = bayer4x4[0][1];
+        else if (localX == 2) baseValue = bayer4x4[0][2];
+        else baseValue = bayer4x4[0][3];
+    } else if (localY == 1) {
+        if (localX == 0) baseValue = bayer4x4[1][0];
+        else if (localX == 1) baseValue = bayer4x4[1][1];
+        else if (localX == 2) baseValue = bayer4x4[1][2];
+        else baseValue = bayer4x4[1][3];
+    } else if (localY == 2) {
+        if (localX == 0) baseValue = bayer4x4[2][0];
+        else if (localX == 1) baseValue = bayer4x4[2][1];
+        else if (localX == 2) baseValue = bayer4x4[2][2];
+        else baseValue = bayer4x4[2][3];
+    } else {
+        if (localX == 0) baseValue = bayer4x4[3][0];
+        else if (localX == 1) baseValue = bayer4x4[3][1];
+        else if (localX == 2) baseValue = bayer4x4[3][2];
+        else baseValue = bayer4x4[3][3];
+    }
+    
+    return (baseValue + quadOffset) / 4.0;
+}
+
+void main() {
+    // View direction for specular/fresnel
+    vec3 viewDir = normalize(u_cameraPos - v_worldPos);
+    
+    // Enhanced lighting for ferrofluid look
+    vec3 lightDir1 = normalize(vec3(1.0, 1.0, 2.0));
+    vec3 lightDir2 = normalize(vec3(-1.0, 0.5, -1.0));
+    
+    float diffuse1 = max(dot(v_normal, lightDir1), 0.0);
+    float diffuse2 = max(dot(v_normal, lightDir2), 0.0) * 0.3;
+    
+    // Specular highlights (metallic)
+    vec3 reflectDir = reflect(-lightDir1, v_normal);
+    float spec = pow(max(dot(viewDir, reflectDir), 0.0), 32.0) * 2.0;
+    
+    // Fresnel effect for rim lighting
+    float fresnel = pow(1.0 - max(dot(viewDir, v_normal), 0.0), 2.0);
+    
+    // Iridescent color shift
+    vec3 iridescence = vec3(
+        sin(fresnel * 3.14159 * 2.0 + u_time * 0.5),
+        sin(fresnel * 3.14159 * 3.0 + u_time * 0.3),
+        sin(fresnel * 3.14159 * 4.0 + u_time * 0.7)
+    ) * 0.2 * (1.0 + u_excitement);
+    
+    // Combine lighting
+    vec3 ambient = vec3(0.15, 0.15, 0.2);
+    vec3 lit_color = v_color * (ambient + diffuse1 + diffuse2) + 
+                     vec3(spec) * vec3(0.8, 0.9, 1.0) +
+                     fresnel * vec3(0.3, 0.4, 0.6) +
+                     iridescence;
+    
+    // Screen position for dithering
+    vec2 screenPos = (v_screenPos * 0.5 + 0.5) * u_resolution;
+    
+    // Apply Bayer dithering
+    vec2 ditherCoord = floor(screenPos / max(u_ditherCellPx, 1.0));
+    float threshold = bayer16x16(ditherCoord);
+    
+    // Quantize to fewer levels
+    float levels = 8.0;
+    vec3 quantized = floor(lit_color * levels + vec3(threshold)) / levels;
+    
+    gl_FragColor = vec4(quantized, 1.0);
+}
+`;
+
+// WebGL setup
+const canvas = document.getElementById('canvas');
+const gl = canvas.getContext('webgl');
+
+if (!gl) {
+    alert('WebGL not supported!');
+}
+
+// Compile shader function
+function createShader(gl, type, source) {
+    const shader = gl.createShader(type);
+    gl.shaderSource(shader, source);
+    gl.compileShader(shader);
+    
+    if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
+        console.error('Shader compile error:', gl.getShaderInfoLog(shader));
+        gl.deleteShader(shader);
+        return null;
+    }
+    
+    return shader;
+}
+
+// Create program function
+function createProgram(gl, vertexShader, fragmentShader) {
+    const program = gl.createProgram();
+    gl.attachShader(program, vertexShader);
+    gl.attachShader(program, fragmentShader);
+    gl.linkProgram(program);
+    
+    if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
+        console.error('Program link error:', gl.getProgramInfoLog(program));
+        gl.deleteProgram(program);
+        return null;
+    }
+    
+    return program;
+}
+
+// Create shaders and program
+const vertexShader = createShader(gl, gl.VERTEX_SHADER, vertexShaderSource);
+const fragmentShader = createShader(gl, gl.FRAGMENT_SHADER, fragmentShaderSource);
+const program = createProgram(gl, vertexShader, fragmentShader);
+
+// Get locations
+const positionAttributeLocation = gl.getAttribLocation(program, 'a_position');
+const timeUniformLocation = gl.getUniformLocation(program, 'u_time');
+const excitementUniformLocation = gl.getUniformLocation(program, 'u_excitement');
+const clickPosUniformLocation = gl.getUniformLocation(program, 'u_clickPos');
+const clickTimeUniformLocation = gl.getUniformLocation(program, 'u_clickTime');
+const projectionUniformLocation = gl.getUniformLocation(program, 'u_projection');
+const modelViewUniformLocation = gl.getUniformLocation(program, 'u_modelView');
+const resolutionUniformLocation = gl.getUniformLocation(program, 'u_resolution');
+const cameraPosUniformLocation = gl.getUniformLocation(program, 'u_cameraPos');
+const ditherCellPxUniformLocation = gl.getUniformLocation(program, 'u_ditherCellPx');
+
+// Create sphere mesh
+const gridSize = 16;
+const vertices = [];
+const indices = [];
+
+for (let i = 0; i <= gridSize; i++) {
+    for (let j = 0; j <= gridSize; j++) {
+        vertices.push(i / gridSize, j / gridSize);
+    }
+}
+
+for (let i = 0; i < gridSize; i++) {
+    for (let j = 0; j < gridSize; j++) {
+        const a = i * (gridSize + 1) + j;
+        const b = a + 1;
+        const c = a + gridSize + 1;
+        const d = c + 1;
+        
+        indices.push(a, b, c);
+        indices.push(b, d, c);
+    }
+}
+
+// Create buffers
+const positionBuffer = gl.createBuffer();
+gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
+gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
+
+const indexBuffer = gl.createBuffer();
+gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
+gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(indices), gl.STATIC_DRAW);
+
+// Matrix helpers
+function createProjectionMatrix(fov, aspect, near, far) {
+    const f = 1.0 / Math.tan(fov / 2);
+    const rangeInv = 1 / (near - far);
+    
+    return new Float32Array([
+        f / aspect, 0, 0, 0,
+        0, f, 0, 0,
+        0, 0, (near + far) * rangeInv, -1,
+        0, 0, near * far * rangeInv * 2, 0
+    ]);
+}
+
+function createModelViewMatrix(rotation) {
+    const c = Math.cos(rotation);
+    const s = Math.sin(rotation);
+    const distance = 8.0;
+    
+    return new Float32Array([
+        c, 0, s, 0,
+        0, 1, 0, 0,
+        -s, 0, c, 0,
+        0, 0, -distance, 1
+    ]);
+}
+
+// Interaction state
+let excitement = 0.3;
+let targetExcitement = 0.3;
+let clickPos = [0, 0];
+let clickTime = 0;
+
+// Handle clicks/taps
+function handleInteraction(event) {
+    event.preventDefault();
+    
+    const rect = canvas.getBoundingClientRect();
+    const x = (event.clientX || event.touches[0].clientX) - rect.left;
+    const y = (event.clientY || event.touches[0].clientY) - rect.top;
+    
+    // Convert to UV coordinates on sphere
+    clickPos[0] = x / rect.width;
+    clickPos[1] = y / rect.height;
+    
+    // Get excited!
+    targetExcitement = Math.min(1.0, targetExcitement + 0.5);
+    clickTime = performance.now() * 0.001;
+}
+
+canvas.addEventListener('mousedown', handleInteraction);
+canvas.addEventListener('touchstart', handleInteraction);
+
+function resizeCanvas() {
+  let screenW = window.visualViewport ? window.visualViewport.width : window.innerWidth;
+  let screenH = window.visualViewport ? window.visualViewport.height : window.innerHeight;
+
+  const scale = (screenW < 768) ? 0.75 : 1.0;
+  const aspect = 1 / 1;
+
+  let width = screenW * scale;
+  let height = screenH * scale;
+
+  if (width / height > aspect) {
+    width = height * aspect;
+  } else {
+    height = width / aspect;
+  }
+
+  canvas.width = Math.floor(width);
+  canvas.height = Math.floor(height);
+  gl.viewport(0, 0, canvas.width, canvas.height);
+}
+
+// Animation loop
+function render(time) {
+    time *= 0.001; // Convert to seconds
+    
+    // Update excitement (smooth decay)
+    excitement += (targetExcitement - excitement) * 0.1;
+    targetExcitement *= 0.99; // Gradual calm down
+    targetExcitement = Math.max(0.3, targetExcitement); // Minimum excitement
+    
+    // Resize canvas
+    resizeCanvas();
+    gl.viewport(0, 0, canvas.width, canvas.height);
+    
+    // Clear
+    gl.clearColor(0.0, 0.0, 0.0, 0.0);
+    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+    
+    // Enable depth test
+    gl.enable(gl.DEPTH_TEST);
+    gl.enable(gl.CULL_FACE);
+    gl.cullFace(gl.BACK);
+    
+    // Use program
+    gl.useProgram(program);
+    
+    // Set uniforms
+    gl.uniform1f(timeUniformLocation, time);
+    gl.uniform1f(excitementUniformLocation, excitement);
+    gl.uniform2f(clickPosUniformLocation, clickPos[0], clickPos[1]);
+    gl.uniform1f(clickTimeUniformLocation, clickTime);
+    gl.uniform2f(resolutionUniformLocation, canvas.width, canvas.height);
+    gl.uniform1f(ditherCellPxUniformLocation, 32.0);
+    
+    // Camera position
+    const cameraDistance = 8.0;
+    const cameraAngle = time * 0.25;
+    gl.uniform3f(cameraPosUniformLocation, 
+        Math.sin(cameraAngle) * cameraDistance,
+        2.0,
+        Math.cos(cameraAngle) * cameraDistance
+    );
+    
+    // Matrices
+    const projectionMatrix = createProjectionMatrix(
+        Math.PI / 4,
+        canvas.width / canvas.height,
+        0.1,
+        100
+    );
+    const modelViewMatrix = createModelViewMatrix(time * 0.2);
+    
+    gl.uniformMatrix4fv(projectionUniformLocation, false, projectionMatrix);
+    gl.uniformMatrix4fv(modelViewUniformLocation, false, modelViewMatrix);
+    
+    // Bind attributes
+    gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
+    gl.enableVertexAttribArray(positionAttributeLocation);
+    gl.vertexAttribPointer(positionAttributeLocation, 2, gl.FLOAT, false, 0, 0);
+    
+    // Draw
+    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
+    gl.drawElements(gl.TRIANGLES, indices.length, gl.UNSIGNED_SHORT, 0);
+    
+    requestAnimationFrame(render);
+}
+
+// Start animation
+render(0);
+window.addEventListener("resize", resizeCanvas);
+window.addEventListener("orientationchange", resizeCanvas);
+resizeCanvas();
+</script>
