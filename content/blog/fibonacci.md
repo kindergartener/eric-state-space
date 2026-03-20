@@ -2,7 +2,7 @@
 title = "Fibonacci Numbers in Rust"
 date = 2025-07-26
 [taxonomies]
-tags = ["rust", "math", "performance", "numerical-computation"]
+tags = ["rust", "math", "number-theory", "algorithms"]
 +++
 
 Perhaps one of the most well-known numeric sequences, the Fibonacci sequence sees each number as the sum of the two

@@ -2,7 +2,7 @@
 title = "Buddhabrot"
 date = 2025-08-04
 [taxonomies]
-tags = ["rust", "math", "visualization", "creative-coding", "numerical-computation"]
+tags = ["rust", "math", "creative-coding", "complex-dynamics"]
 +++
 
 The Mandelbrot set is one of those pieces of math that somehow finds itself into the public consciousness, the quintessential example of a fractal.
