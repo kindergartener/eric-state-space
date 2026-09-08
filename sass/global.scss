@@ -751,6 +751,57 @@ header {
   }
 }
 
+#bento-guestbook .bento-content {
+  display: flex;
+  flex-direction: column;
+  gap: $space-sm;
+}
+
+#guestbook-form {
+  display: flex;
+  flex-direction: column;
+  gap: $space-sm;
+}
+
+#guestbook-form input,
+#guestbook-form textarea {
+  font: inherit;
+  padding: 0.4rem 0.6rem;
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  color: var(--color-text);
+}
+
+#guestbook-form textarea {
+  min-height: 4rem;
+  resize: vertical;
+}
+
+#guestbook-form button {
+  align-self: flex-start;
+  font: inherit;
+  padding: 0.4rem 1rem;
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  color: var(--color-text);
+  cursor: pointer;
+
+  &:hover {
+    background: var(--color-surface-hover);
+  }
+}
+
+#guestbook-error {
+  margin: 0;
+  color: #c00;
+  font-size: 0.85em;
+}
+
+#guestbook-list {
+  border-top: 1px dotted var(--color-decor);
+  padding-top: $space-sm;
+}
+
 .blog-post-title {
   font-weight: 600;
   text-decoration: none;
@@ -818,7 +869,7 @@ header {
   #bento-box {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    grid-template-rows: auto auto;
+    grid-template-rows: auto auto auto;
     gap: $space-md;
   }
 
@@ -837,13 +888,18 @@ header {
     grid-column: 2;
     grid-row: 2;
   }
+
+  #bento-guestbook {
+    grid-column: 1 / 3;
+    grid-row: 3;
+  }
 }
 
 @media (min-width: $breakpoint-tablet) {
   #bento-box {
     display: grid;
     grid-template-columns: 2fr 1fr;
-    grid-template-rows: auto 1fr;
+    grid-template-rows: auto 1fr auto;
     gap: $space-md;
   }
 
@@ -861,6 +917,11 @@ header {
   #bento-links {
     grid-column: 2;
     grid-row: 2;
+  }
+
+  #bento-guestbook {
+    grid-column: 1 / 3;
+    grid-row: 3;
   }
 }
 
