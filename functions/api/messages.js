@@ -6,6 +6,18 @@ export async function onRequestGet(context) {
   return Response.json(results);
 }
 
+async function verifyTurnstile(token, secret) {
+  if (!token) return false;
+
+  const response = await fetch("https://challenges.cloudflare.com/turnstile/v0/siteverify", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ secret, response: token }),
+  });
+  const result = await response.json();
+  return result.success === true;
+}
+
 const BLOCKLIST = ["viagra", "cialis", "casino", "xxx porn", "crypto airdrop"];
 
 function containsBlockedTerm(message) {
@@ -40,6 +52,11 @@ export async function onRequestPost(context) {
 
   if (containsBlockedTerm(validated.message)) {
     return Response.json({ error: "Message rejected." }, { status: 400 });
+  }
+
+  const turnstileOk = await verifyTurnstile(body.turnstileToken, context.env.TURNSTILE_SECRET_KEY);
+  if (!turnstileOk) {
+    return Response.json({ error: "Verification failed. Please try again." }, { status: 400 });
   }
 
   const createdAt = Math.floor(Date.now() / 1000);
