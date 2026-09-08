@@ -104,10 +104,6 @@
   // These elements get NO popup
   function isFullySkipped(link) {
     if (link.classList.contains("blog-more-label")) return true;
-    // A single comma-separated selector list is one upward DOM walk instead
-    // of two — closest() matches the nearest ancestor satisfying any of the
-    // listed selectors, so this is truthy under exactly the same conditions
-    // as the two separate calls it replaces.
     if (link.closest("h1, h2, h3, h4, h5, h6, .curio-tile")) return true;
     return false;
   }
@@ -281,8 +277,6 @@
           link.appendChild(makeIcon("wikipedia-icon", "0 0 1700 1700"));
         }
 
-        // Icon shows regardless of device; only wire the hover popup itself
-        // where hovering is actually a thing (not touch).
         if (!isHoverCapable) return;
 
         link.addEventListener("mouseenter", function (event) {
@@ -310,8 +304,6 @@
           link.appendChild(makeIcon("site-logo-icon", "0 0 57 56"));
         }
 
-        // Icon shows regardless of device; only wire the hover popup itself
-        // where hovering is actually a thing (not touch).
         if (!isHoverCapable) return;
 
         link.addEventListener("mouseenter", function (event) {
@@ -341,9 +333,6 @@
 
   var rootController = createPopupController(null);
 
-  // Popups themselves (escape-to-close, click-outside, blur, and the on/off
-  // toggle button) only make sense on hover-capable devices. On touch, links
-  // still get their icon decoration below, but nothing here ever opens.
   if (isHoverCapable) {
     document.addEventListener("keydown", function (event) {
       if (event.key === "Escape") rootController.closeAll();
