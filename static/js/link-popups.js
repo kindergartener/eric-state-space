@@ -1,9 +1,9 @@
 (function () {
   "use strict";
 
-  if (!window.matchMedia || !window.matchMedia("(hover: hover) and (pointer: fine)").matches) {
-    return;
-  }
+  var isHoverCapable = !!(
+    window.matchMedia && window.matchMedia("(hover: hover) and (pointer: fine)").matches
+  );
 
   var OPEN_DELAY_MS = 1000;
   var CLOSE_DELAY_MS = 400;
@@ -104,10 +104,6 @@
   // These elements get NO popup
   function isFullySkipped(link) {
     if (link.classList.contains("blog-more-label")) return true;
-    // A single comma-separated selector list is one upward DOM walk instead
-    // of two — closest() matches the nearest ancestor satisfying any of the
-    // listed selectors, so this is truthy under exactly the same conditions
-    // as the two separate calls it replaces.
     if (link.closest("h1, h2, h3, h4, h5, h6, .curio-tile")) return true;
     return false;
   }
@@ -281,6 +277,8 @@
           link.appendChild(makeIcon("wikipedia-icon", "0 0 1700 1700"));
         }
 
+        if (!isHoverCapable) return;
+
         link.addEventListener("mouseenter", function (event) {
           scheduleOpen(link, { kind: "wikipedia", entry: entry }, { x: event.clientX, y: event.clientY });
         });
@@ -305,6 +303,8 @@
           link.classList.add("link-popup-ready");
           link.appendChild(makeIcon("site-logo-icon", "0 0 57 56"));
         }
+
+        if (!isHoverCapable) return;
 
         link.addEventListener("mouseenter", function (event) {
           scheduleOpen(link, { kind: "preview", url: url }, { x: event.clientX, y: event.clientY });
@@ -333,37 +333,39 @@
 
   var rootController = createPopupController(null);
 
-  document.addEventListener("keydown", function (event) {
-    if (event.key === "Escape") rootController.closeAll();
-  });
-
-  // Fallback behavior for popup closing
-  document.addEventListener("click", function (event) {
-    if (event.target.closest && event.target.closest(".link-popup.open")) return;
-    rootController.closeAll();
-  });
-
-  window.addEventListener("blur", function () {
-    rootController.closeAll();
-  });
-
-  var popupToggle = document.getElementById("popup-toggle");
-  var popupToggleIcon = document.getElementById("popup-toggle-icon");
-  if (popupToggle && popupToggleIcon) {
-    popupToggle.hidden = false;
-    var syncPopupToggle = function () {
-      var state = popupsEnabled ? "on" : "off";
-      popupToggleIcon.setAttribute("href", "#popup-icon-" + state);
-      popupToggle.setAttribute("title", "Link popups: " + state);
-      popupToggle.setAttribute("aria-label", "Toggle link popups (currently " + state + ")");
-    };
-    syncPopupToggle();
-    popupToggle.addEventListener("click", function () {
-      popupsEnabled = !popupsEnabled;
-      localStorage.setItem("popups-enabled", popupsEnabled ? "1" : "0");
-      if (!popupsEnabled) rootController.closeAll();
-      syncPopupToggle();
+  if (isHoverCapable) {
+    document.addEventListener("keydown", function (event) {
+      if (event.key === "Escape") rootController.closeAll();
     });
+
+    // Fallback behavior for popup closing
+    document.addEventListener("click", function (event) {
+      if (event.target.closest && event.target.closest(".link-popup.open")) return;
+      rootController.closeAll();
+    });
+
+    window.addEventListener("blur", function () {
+      rootController.closeAll();
+    });
+
+    var popupToggle = document.getElementById("popup-toggle");
+    var popupToggleIcon = document.getElementById("popup-toggle-icon");
+    if (popupToggle && popupToggleIcon) {
+      popupToggle.hidden = false;
+      var syncPopupToggle = function () {
+        var state = popupsEnabled ? "on" : "off";
+        popupToggleIcon.setAttribute("href", "#popup-icon-" + state);
+        popupToggle.setAttribute("title", "Link popups: " + state);
+        popupToggle.setAttribute("aria-label", "Toggle link popups (currently " + state + ")");
+      };
+      syncPopupToggle();
+      popupToggle.addEventListener("click", function () {
+        popupsEnabled = !popupsEnabled;
+        localStorage.setItem("popups-enabled", popupsEnabled ? "1" : "0");
+        if (!popupsEnabled) rootController.closeAll();
+        syncPopupToggle();
+      });
+    }
   }
 
   rootController.wireAll(document);

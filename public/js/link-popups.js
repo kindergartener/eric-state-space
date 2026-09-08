@@ -1,9 +1,9 @@
 (function () {
   "use strict";
 
-  if (!window.matchMedia || !window.matchMedia("(hover: hover) and (pointer: fine)").matches) {
-    return;
-  }
+  var isHoverCapable = !!(
+    window.matchMedia && window.matchMedia("(hover: hover) and (pointer: fine)").matches
+  );
 
   var OPEN_DELAY_MS = 1000;
   var CLOSE_DELAY_MS = 400;
@@ -281,6 +281,10 @@
           link.appendChild(makeIcon("wikipedia-icon", "0 0 1700 1700"));
         }
 
+        // Icon shows regardless of device; only wire the hover popup itself
+        // where hovering is actually a thing (not touch).
+        if (!isHoverCapable) return;
+
         link.addEventListener("mouseenter", function (event) {
           scheduleOpen(link, { kind: "wikipedia", entry: entry }, { x: event.clientX, y: event.clientY });
         });
@@ -305,6 +309,10 @@
           link.classList.add("link-popup-ready");
           link.appendChild(makeIcon("site-logo-icon", "0 0 57 56"));
         }
+
+        // Icon shows regardless of device; only wire the hover popup itself
+        // where hovering is actually a thing (not touch).
+        if (!isHoverCapable) return;
 
         link.addEventListener("mouseenter", function (event) {
           scheduleOpen(link, { kind: "preview", url: url }, { x: event.clientX, y: event.clientY });
@@ -333,37 +341,42 @@
 
   var rootController = createPopupController(null);
 
-  document.addEventListener("keydown", function (event) {
-    if (event.key === "Escape") rootController.closeAll();
-  });
-
-  // Fallback behavior for popup closing
-  document.addEventListener("click", function (event) {
-    if (event.target.closest && event.target.closest(".link-popup.open")) return;
-    rootController.closeAll();
-  });
-
-  window.addEventListener("blur", function () {
-    rootController.closeAll();
-  });
-
-  var popupToggle = document.getElementById("popup-toggle");
-  var popupToggleIcon = document.getElementById("popup-toggle-icon");
-  if (popupToggle && popupToggleIcon) {
-    popupToggle.hidden = false;
-    var syncPopupToggle = function () {
-      var state = popupsEnabled ? "on" : "off";
-      popupToggleIcon.setAttribute("href", "#popup-icon-" + state);
-      popupToggle.setAttribute("title", "Link popups: " + state);
-      popupToggle.setAttribute("aria-label", "Toggle link popups (currently " + state + ")");
-    };
-    syncPopupToggle();
-    popupToggle.addEventListener("click", function () {
-      popupsEnabled = !popupsEnabled;
-      localStorage.setItem("popups-enabled", popupsEnabled ? "1" : "0");
-      if (!popupsEnabled) rootController.closeAll();
-      syncPopupToggle();
+  // Popups themselves (escape-to-close, click-outside, blur, and the on/off
+  // toggle button) only make sense on hover-capable devices. On touch, links
+  // still get their icon decoration below, but nothing here ever opens.
+  if (isHoverCapable) {
+    document.addEventListener("keydown", function (event) {
+      if (event.key === "Escape") rootController.closeAll();
     });
+
+    // Fallback behavior for popup closing
+    document.addEventListener("click", function (event) {
+      if (event.target.closest && event.target.closest(".link-popup.open")) return;
+      rootController.closeAll();
+    });
+
+    window.addEventListener("blur", function () {
+      rootController.closeAll();
+    });
+
+    var popupToggle = document.getElementById("popup-toggle");
+    var popupToggleIcon = document.getElementById("popup-toggle-icon");
+    if (popupToggle && popupToggleIcon) {
+      popupToggle.hidden = false;
+      var syncPopupToggle = function () {
+        var state = popupsEnabled ? "on" : "off";
+        popupToggleIcon.setAttribute("href", "#popup-icon-" + state);
+        popupToggle.setAttribute("title", "Link popups: " + state);
+        popupToggle.setAttribute("aria-label", "Toggle link popups (currently " + state + ")");
+      };
+      syncPopupToggle();
+      popupToggle.addEventListener("click", function () {
+        popupsEnabled = !popupsEnabled;
+        localStorage.setItem("popups-enabled", popupsEnabled ? "1" : "0");
+        if (!popupsEnabled) rootController.closeAll();
+        syncPopupToggle();
+      });
+    }
   }
 
   rootController.wireAll(document);
