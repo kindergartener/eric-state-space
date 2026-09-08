@@ -36,3 +36,7 @@ nav_items = [
 
 # Autoplay speed of the home-page buttons marquee, in pixels per second.
 marquee_speed = 40
+
+# Cloudflare Turnstile site key for the guestbook form. Public — safe to
+# commit (the paired secret key is the sensitive half, kept out of git).
+turnstile_sitekey = "1x00000000000000000000AA"
