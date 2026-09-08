@@ -1,0 +1,11 @@
+{% component button_tile(button, suppress_drag=false) %}
+{% if button.url %}
+<a href="{{ button.url }}" target="_blank" rel="noopener noreferrer" class="button-tile"{% if suppress_drag %} draggable="false"{% endif %}>
+  <img src="{{ get_url(path=button.image, trailing_slash=false) }}" title="{{ button.title }}" alt="{{ button.title }}" width="88" height="31"{% if suppress_drag %} draggable="false"{% endif %}>
+</a>
+{% else %}
+<span class="button-tile"{% if suppress_drag %} draggable="false"{% endif %}>
+  <img src="{{ get_url(path=button.image, trailing_slash=false) }}" title="{{ button.title }}" alt="{{ button.title }}" width="88" height="31"{% if suppress_drag %} draggable="false"{% endif %}>
+</span>
+{% endif %}
+{% endcomponent button_tile %}

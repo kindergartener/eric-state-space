@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="misc-strip">
+  {% for bit in page.extra.bits %}
+  {% if bit.video %}
+  <video src="{{ get_url(path='images/' ~ bit.video, trailing_slash=false) }}" controls></video>
+  {% else %}
+  <img src="{{ get_url(path='images/' ~ bit.image, trailing_slash=false) }}" alt="">
+  {% endif %}
+  {% endfor %}
+</div>
+
+<style>
+  .misc-strip {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    max-width: 40rem;
+    margin: 0 auto;
+    padding: 2rem 1rem;
+  }
+
+  .misc-strip img,
+  .misc-strip video {
+    max-width: 100%;
+    height: auto;
+    display: block;
+  }
+</style>
+{% endblock content %}

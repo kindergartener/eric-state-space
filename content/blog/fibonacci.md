@@ -1,13 +1,16 @@
 +++
 title = "Fibonacci Numbers in Rust"
 date = 2025-07-26
+description = "Benchmarking four Rust implementations of the Fibonacci sequence to see how large an n each can calculate in under a second."
 [taxonomies]
 tags = ["rust", "math", "number-theory", "algorithms"]
+[extra]
+thumbnail = "/images/fibonacci_all.png"
 +++
 
-Perhaps one of the most well-known numeric sequences, the Fibonacci sequence sees each number as the sum of the two
-preceding numbers. Starting with \\(0\\) and \\(1\\), we can find the next element by doing \\(0 + 1 = 1\\), then \\(1 + 1 = 2\\) and
-so on. The first 10 Fibonacci numbers are \\(0, 1, 1, 2, 3, 5, 8, 13, 21, 34\\). The Fibonacci sequence
+In 1202, a merchant's son named Leonardo of Pisa posed a word problem about rabbits that would not, under any circumstances, stop breeding. Eight centuries later, the rabbits all live in my CPU, but the problem hasn't gotten any smaller.
+Starting with \\(0\\) and \\(1\\), we can find the next number by doing \\(0 + 1 = 1\\), then \\(1 + 1 = 2\\) and
+so on. The first 10 numbers are \\(0, 1, 1, 2, 3, 5, 8, 13, 21, 34\\), thus the [Fibonacci sequence](https://en.wikipedia.org/wiki/Fibonacci_sequence)
 can be defined by the recurrence relation:
 
 $$
@@ -17,15 +20,15 @@ $$
 \end{aligned}
 $$
 
-On an unrelated note, I started learning the Rust programming language last year. While reading about the Fibonacci numbers, I started thinking to myself,
-"Hey, I should write a Rust program to generate these!" But that begs the question, how fast can I calculate these Fibonacci numbers?
-Can Rust provide me any unique benefits towards this goal? In this exploration, I try to calculate the largest Fibonacci number possible in under
-1 second, in Rust.
+At the same time, I started learning the Rust programming language last year. While reading about the Fibonacci numbers, I thought,
+"Hey, I should write a Rust program to generate these!" But that raised the question, how fast could I calculate these Fibonacci numbers?
+Could Rust provide me any unique benefits here? In this exploration, I tried to calculate the largest Fibonacci number possible in under
+1 second using Rust.
 
 # The Naïve Approach
 
-The obvious way to calculate Fibonacci numbers in Rust would be to directly translate the recurrence relation above--in
-other words, the recursive approach. The code for this is pretty simple actually:
+The obvious way to calculate Fibonacci numbers in Rust would be to directly translate the recurrence relation above—in
+other words, the recursive approach. The code for this is simple:
 
 ```rust
 pub fn fib_recursive(n: usize) -> u128 {
@@ -37,12 +40,12 @@ pub fn fib_recursive(n: usize) -> u128 {
 }
 ```
 
-Simple, but not really practical. This algorithm has exponential time complexity, let's call it \\(O(2^n)\\).
-The runtime graph below is pretty pitiful, as we can only calculate the 38th Fibonacci number this way. I could do that with
+Simple, but not really practical. This algorithm has exponential time complexity, we'll call it \\(O(2^n)\\).
+The runtime graph below is pretty pitiful, as I can only calculate the 38th Fibonacci number this way. I could do that with
 a pen, paper, and a free afternoon!
 
 <figure class="center">
-  <img src="/images/fibonacci_recursive.png" alt="Recursive Fibonacci" />
+  <img class="zoomable" src="/images/fibonacci_recursive.png" alt="Recursive Fibonacci" />
 
   <figcaption>
     Runtime graph for recursive Fibonacci with max_n = 38.
@@ -65,19 +68,19 @@ pub fn fib_slidingwin(n: usize) -> u128 {
 }
 ```
 
-This algorithm runs in linear time, \\(O(n)\\). We quickly run into an issue though; the maximum
+This algorithm runs in linear time, \\(O(n)\\). And then, right on schedule, everything breaks; the maximum
 value a `u128` integer type can hold is \\(2^{128} - 1 \approx 3.40 \times 10^{38}\\). The largest
-Fibonacci number within this bound is \\(\mathrm{F_{186}} \approx 3.33 \times 10^{38}\\), so we won't be
-able to calculate any terms after 186. We must use a type that can handle arbitrarily large integers.
+Fibonacci number within this bound is \\(\mathrm{F_{186}} \approx 3.33 \times 10^{38}\\), so I won't be
+able to calculate any terms after 186. I must use a type that can handle arbitrarily large integers.
 
 ## Big Integers
 
 I use the [num_bigint](https://docs.rs/num-bigint/latest/num_bigint/) crate
-which gives us the type `BigUint`, a vector of digits. The capacity of this type is still limited
-by the underlying allocator and operating system, but it should be enough to store any
-Fibonacci number we need.
+which gives me the type `BigUint`, a vector of digits. The capacity of this type is still limited
+by the underlying allocator and operating system, but it should be enough headroom so that the actual limit
+is somewhere past the [heat death of the universe](https://en.wikipedia.org/wiki/Heat_death_of_the_universe). In other words, it's okay.
 
-Implementing this with the example above we get:
+Implementing this with the example above I get:
 
 ```rust
 pub fn fib_slidingwin(n: usize) -> BigUint {
@@ -90,19 +93,19 @@ pub fn fib_slidingwin(n: usize) -> BigUint {
 }
 ```
 
-Let's see what the runtime graph looks like:
+Here's what the runtime graph looks like:
 
 <figure class="center">
-  <img src="/images/fibonacci_sliding-window.png" alt="Sliding Window Fibonacci" />
+  <img class="zoomable" src="/images/fibonacci_sliding-window.png" alt="Sliding Window Fibonacci" />
 
   <figcaption>
-    Runtime graph for sliding window Fibonacci with max_n = 694,720.
+    Runtime graph for Sliding Window Fibonacci with max_n = 694,720.
   </figcaption>
 </figure>
 
 # Matrix Multiplication
 
-This next algorithm makes use of a lesser-known matrix identity for the Fibonacci numbers.
+This next algorithm uses a lesser-known matrix identity for the Fibonacci numbers.
 Start with the observation that:
 
 $$
@@ -163,7 +166,7 @@ $$
 \end{bmatrix}
 $$
 
-Using similar logic and the magic of induction, one can show that the square matrix "generates" Fibonacci numbers:
+Using similar logic and the magic of induction, we can show that the square matrix "generates" Fibonacci numbers:
 
 $$
 \boxed{
@@ -180,9 +183,9 @@ $$
 }
 $$
 
-This is the formula I used for my Fibonacci algorithm! If we can multiply \\(n\\) matrices, we can
+This is the formula I used for my Fibonacci algorithm. If we can multiply \\(n\\) matrices, we can
 get the \\(n+1\\) Fibonacci number. In theory this has \\(O(n)\\) runtime complexity
-since we perform an \\(O(1)\\) matrix multiplication $n$ times, but we can do better.
+since we perform an \\(O(1)\\) matrix multiplication \\(n\\) times, but we can do better.
 
 ## Binary Exponentiation
 
@@ -247,15 +250,15 @@ pub fn fib_matrixmult(n: usize) -> BigUint {
 }
 ```
 
-Here `matrix_mult` is a function that multiplies 2x2 matrices. Looking at the graph,
-we achieve a significant improvement over the sliding window method, with a maximum
+Here `matrix_mult` is a function that multiplies 2x2 matrices. As the graph shows,
+I achieve a significant improvement over the Sliding Window method, with a maximum
 iteration of \\(n=4,370,432\\):
 
 <figure class="center">
-  <img src="/images/fibonacci_matrix-mult.png" alt="Matrix Multiplication Fibonacci" />
+  <img class="zoomable" src="/images/fibonacci_matrix-mult.png" alt="Matrix Multiplication Fibonacci" />
 
   <figcaption>
-    Runtime graph for matrix multiplication Fibonacci with max_n = 4,370,432.
+    Runtime graph for Matrix Multiplication Fibonacci with max_n = 4,370,432.
   </figcaption>
 </figure>
 
@@ -263,21 +266,21 @@ Wait, why does this look more like a staircase than a slide? Something's going o
 
 ## Heap
 
-There's something nonlinear happening here. We see these discrete runtime spikes occurring at around \\(n\approx1\mathrm{e}6\\),
-\\(2\mathrm{e}6\\), and \\(4\mathrm{e}6\\). These threshold-based jumps suggest something about the way `BigUint` handles large numbers.
+There's something nonlinear happening here. I see these discrete runtime spikes occurring at around \\(n\approx1\mathrm{e}6\\),
+\\(2\mathrm{e}6\\), and \\(4\mathrm{e}6\\). These threshold-based jumps hint at how `BigUint` handles large numbers.
 
 Internally, the type is a dynamically sized `Vec<usize>`; when the number of bits (digits) exceeds a power of 2, the buffer
-must [reallocate its maximum capacity](https://doc.rust-lang.org/std/vec/struct.Vec.html#capacity-and-reallocation). This reallocation involves expensive operations like heap allocation and copying old digits.
+must [reallocate to a larger capacity](https://doc.rust-lang.org/std/vec/struct.Vec.html#capacity-and-reallocation). This reallocation involves expensive operations like heap allocation and copying old digits.
 
 In essence, the cost per step depends on the current size of `BigUint`: once
 \\(\mathrm{F_n}\\) reaches a new order of magnitude, each multiplication gets more expensive.
 
-It's worth mentioning the `.clone()` method used to return our Fibonacci number. `BigUint` does not implement the `Copy` trait, so
-we can't just [move the value](https://doc.rust-lang.org/rust-by-example/scope/move/partial_move.html) out the matrix. For large \\(n\\), cloning could bottleneck performance, although I couldn't find a way to avoid it.
+One thing that flew under my nose: that `.clone()` call is doing way more work than it looks like. `BigUint` does not implement the `Copy` trait, so
+I can't just [move the value](https://doc.rust-lang.org/rust-by-example/scope/move/partial_move.html) out of the matrix. For large \\(n\\), cloning could bottleneck performance, although I couldn't find a way to avoid it.
 
 # Fast Doubling
 
-The fast doubling approach makes use of the "double-angle" identities for the Fibonacci numbers. We can arrive at
+The Fast Doubling approach uses the double-angle identities for the Fibonacci numbers. We can arrive at
 these identities by simply squaring the matrix representation:
 
 $$
@@ -331,7 +334,7 @@ $$
 $$
 
 We can use these identities to compute \\((\mathrm{F_{n}}, \mathrm{F_{n+1}})\\) by recursing on \\(\lfloor n/2 \rfloor\\), which gives
-a \\(O(\log n)\\) recursion depth. 
+an \\(O(\log n)\\) recursion depth.
 Given \\((a, b) = (\mathrm{F_{\lfloor n/2 \rfloor}}, \mathrm{F_{\lfloor n/2 \rfloor +1}})\\), let
 
 $$
@@ -351,7 +354,7 @@ $$
 \end{cases}
 $$
 
-and we can implement this as follows:
+and I can implement this as follows:
 
 ```rust
 /// Returns (F(n), F(n+1))
@@ -391,72 +394,73 @@ This algorithm is a significant improvement over Matrix Multiplication, achievin
 \\(n = 17,937,917\\):
 
 <figure class="center">
-  <img src="/images/fibonacci_doubling.png" alt="Fast Doubling Fibonacci" />
+  <img class="zoomable" src="/images/fibonacci_doubling.png" alt="Fast Doubling Fibonacci" />
 
   <figcaption>
-    Runtime graph for fast doubling Fibonacci with max_n = 17,937,917.
+    Runtime graph for Fast Doubling Fibonacci with max_n = 17,937,917.
   </figcaption>
 </figure>
 
-The main thing to note is that this process involves just 3 `BigUint` multiplications: one for calculating \\(c\\) and two for
-\\(d\\). Compare this to the 8-12 `BigUint` multiplications required for the Matrix Multiplication method and we can see why Fast Doubling
+This process involves just 3 `BigUint` multiplications: one for calculating \\(c\\) and two for
+\\(d\\). Compared to the 8-12 `BigUint` multiplications Matrix Multiplication requires, I can see why Fast Doubling
 is able to calculate such large numbers, despite both algorithms being \\(O(\log n)\\).
 
 # Discussion
 
 I tested 4 different methods of calculating Fibonacci numbers in hopes of finding the highest \\(\mathrm{F_n}\\) in under 1 second.
-Results largely depended on the algorithm used: the recursive implementation barely calculated the 40th Fibonacci number
-while the fast doubling method approached almost 18,000,000!
+Results largely depended on the algorithm used: the recursive implementation barely calculated the 38th Fibonacci number
+while the Fast Doubling method approached almost 18,000,000!
 
-The figures below show a more direct comparison between algorithms:
+The table and figure below show a more direct comparison between algorithms:
 
 <br>
-<table style="border-collapse: collapse; text-align: center; margin-inline: auto;">
+<table>
   <tr>
-    <th style="border: 1px solid black; padding: 10px; font-weight: 700;">Algorithm</th>
-    <th style="border: 1px solid black; padding: 10px; font-weight: 700;">Highest <i>n</i></th>
-    <th style="border: 1px solid black; padding: 10px; font-weight: 700;">Time Complexity</th>
-    <th style="border: 1px solid black; padding: 10px; font-weight: 700;">Space Complexity</th>
+    <th>Algorithm</th>
+    <th>Highest <i>n</i></th>
+    <th>Time Complexity</th>
+    <th>Space Complexity</th>
   </tr>
   <tr>
-    <td style="border: 1px solid black; padding: 10px;">Recursive</td>
-    <td style="border: 1px solid black; padding: 10px;">38</td>
-    <td style="border: 1px solid black; padding: 10px; background-color: #ffcccc;">O(2<sup>n</sup>)</td>
-    <td style="border: 1px solid black; padding: 10px; background-color: #fff7cc;">O(n)</td>
+    <td>Recursive</td>
+    <td>38</td>
+    <td style="background-color: #ffcccc; color: #1a1a1a;">O(2<sup>n</sup>)</td>
+    <td style="background-color: #fff7cc; color: #1a1a1a;">O(n)</td>
   </tr>
   <tr>
-    <td style="border: 1px solid black; padding: 10px;">Sliding Win</td>
-    <td style="border: 1px solid black; padding: 10px;">694,720</td>
-    <td style="border: 1px solid black; padding: 10px; background-color: #fff7cc;">O(n)</td>
-    <td style="border: 1px solid black; padding: 10px; background-color: #fff7cc;">O(n)</td>
+    <td>Sliding Win</td>
+    <td>694,720</td>
+    <td style="background-color: #fff7cc; color: #1a1a1a;">O(n)</td>
+    <td style="background-color: #fff7cc; color: #1a1a1a;">O(n)</td>
   </tr>
   <tr>
-    <td style="border: 1px solid black; padding: 10px;">Matrix Mult</td>
-    <td style="border: 1px solid black; padding: 10px;">4,370,432</td>
-    <td style="border: 1px solid black; padding: 10px; background-color: #ccffcc;">O(log n)</td>
-    <td style="border: 1px solid black; padding: 10px; background-color: #fff7cc;">O(n)</td>
+    <td>Matrix Mult</td>
+    <td>4,370,432</td>
+    <td style="background-color: #ccffcc; color: #1a1a1a;">O(log n)</td>
+    <td style="background-color: #fff7cc; color: #1a1a1a;">O(n)</td>
   </tr>
   <tr>
-    <td style="border: 1px solid black; padding: 10px;">Fast Doubl</td>
-    <td style="border: 1px solid black; padding: 10px;">17,937,917</td>
-    <td style="border: 1px solid black; padding: 10px; background-color: #ccffcc;">O(log n)</td>
-    <td style="border: 1px solid black; padding: 10px; background-color: #ccffcc;">O(log n)</td>
+    <td>Fast Doubl</td>
+    <td>17,937,917</td>
+    <td style="background-color: #ccffcc; color: #1a1a1a;">O(log n)</td>
+    <td style="background-color: #ccffcc; color: #1a1a1a;">O(log n)</td>
   </tr>
 </table>
 
 <figure class="center">
-  <img src="/images/fibonacci_all.png" alt="All Fibonacci" />
+  <img class="zoomable" src="/images/fibonacci_all.png" alt="All Fibonacci" />
 
   <figcaption>
-    Comparison of runtimes for sliding window, matrix multiplication, and fast doubling Fibonacci.
+    Comparison of runtimes for Sliding Window, Matrix Multiplication, and Fast Doubling Fibonacci.
   </figcaption>
 </figure>
 
-I was surprised to find that despite both being \\(O(\log n)\\) runtime algorithms, matrix multiplication
-and fast doubling achieved such drastic iteration differences. I suspect the reason is that fast doubling not only performs fewer `BigUint`
+I was surprised to find that despite both being \\(O(\log n)\\) runtime algorithms, Matrix Multiplication
+and Fast Doubling achieved such dramatic iteration differences. I suspect the reason is that Fast Doubling not only performs fewer `BigUint`
 operations but also takes up less memory. It can therefore benefit more from cache locality and avoid overhead associated with
 repeated memory allocations.
 
-This analysis was very preliminary and I'd love to dive deeper into this topic in the future. For example, the `BigUint` multiplication operations
-could be implemented using fast integer multiplication such as [Karatsuba](https://en.wikipedia.org/wiki/Karatsuba_algorithm) or [Schönhage–Strassen](https://en.wikipedia.org/wiki/Sch%C3%B6nhage%E2%80%93Strassen_algorithm).
-I could also experiment with other Fibonacci/Lucas number [identities](https://mathworld.wolfram.com/FibonacciNumber.html) besides the typical "double-angle" identity.
+None of this was rigorous, just a guy going on his daily `cargo run`s. There's still more to be done: faster integer multiplication for `BigUint` 
+through [Karatsuba](https://en.wikipedia.org/wiki/Karatsuba_algorithm) or [Schönhage–Strassen](https://en.wikipedia.org/wiki/Sch%C3%B6nhage%E2%80%93Strassen_algorithm),
+other Fibonacci/Lucas number [identities](https://mathworld.wolfram.com/FibonacciNumber.html) besides double-angle, maybe even [GPU computing](https://en.wikipedia.org/wiki/General-purpose_computing_on_graphics_processing_units).
+But that's next month's rabbit hole.

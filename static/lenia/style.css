@@ -1,0 +1,866 @@
+/* Terminus is a bitmap font (X11's terminus-font) shipped here as a
+   scalable TTF wrapper around those bitmaps — it's hinted for crisp
+   rendering at its native sizes, which is what gives it the pixelated
+   look, not any CSS trick. Four faces so bold/italic text elsewhere in
+   the UI picks the matching hand-drawn face instead of the browser
+   synthesizing (faux-bolding/slanting) the regular face. */
+@font-face {
+  font-family: 'Terminus';
+  src: url('fonts/TerminusTTF.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'Terminus';
+  src: url('fonts/TerminusTTF-Bold.ttf') format('truetype');
+  font-weight: bold;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'Terminus';
+  src: url('fonts/TerminusTTF-Italic.ttf') format('truetype');
+  font-weight: normal;
+  font-style: italic;
+}
+@font-face {
+  font-family: 'Terminus';
+  src: url('fonts/TerminusTTF-Bold-Italic.ttf') format('truetype');
+  font-weight: bold;
+  font-style: italic;
+}
+
+:root {
+  /* Overrides ui-tokens.css's --font-mono (loaded first, so this wins on
+     the cascade) — every component in ui-components.css/style.css reads
+     font-family from this token rather than hardcoding one, so this one
+     change covers the whole site's text. Keep the previous stack as
+     fallback for the moment before the @font-face load resolves and for
+     any environment that fails to load the TTF. --fs-body (12px) is
+     replaced with a literal 12pt here for the same reason — it's the
+     base size nearly everything inherits from; the smaller --fs-label/
+     --fs-small tokens are left as their own proportionally-scaled sizes
+     rather than forced to the same 12pt, since several dense layouts
+     (the audio patch modal's meters/connection rows) are sized tightly
+     around those smaller values. */
+  --font-mono: 'Terminus', "JetBrains Mono", "IBM Plex Mono", ui-monospace, Consolas, monospace;
+  --fs-body: 12pt;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  touch-action: none;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+  -webkit-tap-highlight-color: transparent;
+  /* Terminus is a bitmap font — anti-aliasing/subpixel smoothing blurs
+     exactly the crisp pixel edges that are the point of using it.
+     Neither property is standardized (font-smooth is deprecated,
+     -moz-osx-font-smoothing only affects macOS Firefox/Gecko), so this is
+     best-effort per-platform, not a guarantee everywhere. */
+  -webkit-font-smoothing: none;
+  font-smooth: never;
+}
+
+/* Form controls need their own text to stay selectable/editable despite
+   the page-wide user-select: none above — WebKit doesn't reliably exempt
+   them on its own. */
+input, textarea, select {
+  -webkit-user-select: text;
+  user-select: text;
+  touch-action: manipulation;
+}
+
+#app {
+  position: relative;
+  /* Two-tier fallback for the mobile black-bar issue (see index.html's
+     viewport-fit=cover, needed alongside this):
+     1. 100vw/100vh — sized against the *largest* possible mobile
+        viewport (toolbar fully collapsed), so it overshoots the real
+        visible area whenever the toolbar is showing. Baseline fallback
+        for browsers without dvh support.
+     2. 100dvw/100dvh — tracks the actual visible viewport and updates as
+        mobile browser chrome shows/hides (iOS Safari 15.4+, Chrome
+        Android 108+).
+     A JS-measured `visualViewport.height` custom-property override was
+     tried here and reverted — it made the bottom gap worse in practice
+     (likely measured too early, before Safari settled layout for
+     viewport-fit=cover), regressing behind plain dvh. dvh alone
+     (combined with viewport-fit=cover) is what's currently confirmed
+     working — do not reintroduce a JS override without testing the
+     specific failure mode above first. */
+  width: 100vw;
+  height: 100vh;
+  width: 100dvw;
+  height: 100dvh;
+}
+
+#lenia-canvas {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  touch-action: none;
+}
+
+/* ============================================================
+   #controls — parameter menu. Surface, bevel, and typography come
+   from ui-tokens.css/ui-components.css (the lf- design system, see
+   docs/design/DESIGN_SPEC.md); this file only owns positioning/
+   animation and small integration fixes where this app's markup
+   (native <label> wrappers, range+number pairs) diverges from the
+   reference mockup's plain-<div> structure.
+   ============================================================ */
+
+/* Params menu opens as a centered modal (t key or double-tap, see
+   main.js) rather than a docked side panel with a toggle button — no
+   intermediary click needed once the gesture fires. */
+#controls {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  z-index: 4;
+  width: min(300px, 90vw);
+  max-height: 85vh;
+  overflow-y: auto;
+  transform: translate(-50%, -50%) scale(0.95);
+  opacity: 0;
+  pointer-events: none;
+  transition: transform 0.15s ease, opacity 0.15s ease;
+}
+
+#controls.open {
+  transform: translate(-50%, -50%) scale(1);
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* ui-components.css doesn't set a display on .lf-field because the
+   reference mockup uses plain <div>s (block by default); this app uses
+   <label> (inline by default) for the same rows so a click on the field
+   name also focuses/toggles the control, so it needs an explicit
+   block-ish layout to stack its name/control vertically. */
+#controls .lf-field {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+#mu-sigma-control .lf-grid2 {
+  margin-top: var(--space-3);
+}
+
+.input-row {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 0.35rem;
+  margin-top: 2px;
+}
+
+.input-row input[type="range"] {
+  flex: 1;
+  min-width: 0;
+}
+
+/* #controls .input-row .lf-knob-wrap (below, in the number-knob section)
+   is what constrains the paired number field's width now — it used to be
+   set directly on the input, but the input is wrapped in .lf-knob-wrap
+   for the drag/scroll "knob" that replaces its spin-button arrows, so
+   that role moved to the wrap. Kept ID-scoped there for the same reason
+   this comment used to explain: ui-components.css's
+   "#controls input[type=number]{width:100%}" is ID-specificity and would
+   otherwise win. */
+
+#mu-sigma-map {
+  cursor: crosshair;
+  image-rendering: pixelated;
+}
+
+/* Integration fixes: ui-components.css (the extracted component sheet)
+   omits a few bevel/pressed-state declarations that 1-tracker-panel.html
+   (the actual source-of-truth mockup) includes directly. Re-added here,
+   scoped the same way the mockup scopes them, rather than editing the
+   vendored file. */
+
+/* .lf-heat: mockup uses a 2px sunk border (heavier than the 1px .lf-sunk
+   utility) — ui-components.css doesn't add a border to it at all. */
+#controls .lf-heat {
+  border-top: 2px solid var(--bevel-dark);
+  border-left: 2px solid var(--bevel-dark);
+  border-right: 2px solid var(--bevel-light);
+  border-bottom: 2px solid var(--bevel-light);
+}
+
+/* Text/number inputs and selects get no border at all from
+   ui-components.css, so the browser's own default input chrome (which
+   varies by browser/OS and doesn't match --bevel-dark/--bevel-light)
+   shows through instead — inconsistent with, and usually visually
+   heavier than, the deliberate 1px bevel used everywhere else in the
+   menu. Pin it to the same 1px sunk treatment across both panels. */
+#controls select,
+#controls input[type="text"],
+#controls input[type="number"],
+#audio-patch-modal input[type="number"] {
+  border-top: 1px solid var(--bevel-dark);
+  border-left: 1px solid var(--bevel-dark);
+  border-right: 1px solid var(--bevel-light);
+  border-bottom: 1px solid var(--bevel-light);
+}
+
+/* Replaces every number input's native spin-button arrows with a
+   draggable "knob" strip (attachNumberKnob() in main.js wraps the input
+   in .lf-knob-wrap and appends .lf-knob — see that function's comment for
+   why wrapping rather than overlaying). The two read as one fused
+   control: the input drops its own right border here (ID-scoped to beat
+   the border rule above on specificity, same technique already used
+   elsewhere in this file) and the knob picks up the matching bevel on
+   its remaining three sides, sharing the seam. */
+.lf-knob-wrap {
+  display: inline-flex;
+  align-items: stretch;
+}
+
+.lf-knob-wrap input[type="number"] {
+  flex: 1 1 auto;
+  min-width: 0;
+  -moz-appearance: textfield;
+}
+
+.lf-knob-wrap input[type="number"]::-webkit-inner-spin-button,
+.lf-knob-wrap input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+#controls .lf-knob-wrap input[type="number"],
+#audio-patch-modal .lf-knob-wrap input[type="number"] {
+  border-right: none;
+}
+
+/* The knob itself: a repeating-line texture on its short axis, evoking
+   the side view of a textured turn knob. Drag vertically or scroll over
+   it to step the value (see attachNumberKnob). */
+.lf-knob {
+  flex: 0 0 9px;
+  width: 9px;
+  cursor: ns-resize;
+  touch-action: none; /* vertical drag must not also scroll the page/modal */
+  background-color: var(--surface-3);
+  background-image: repeating-linear-gradient(to bottom, var(--line-bright) 0, var(--line-bright) 1px, transparent 1px, transparent 3px);
+  /* No border of its own — --bevel-dark/--bevel-light are semi-transparent
+     (rgba, not flat colors), and stacking a second embossed frame right
+     against the input's own border (and whatever embossed container
+     that's inside) compounded into a muddy look. The texture + input's
+     remaining three-sided border are enough separation on their own. */
+}
+
+.lf-knob:hover,
+.lf-knob:active {
+  background-color: var(--surface-2);
+}
+
+/* Width overrides: each context below previously set an explicit width
+   directly on the input (ui-components.css's #controls input[type=number]
+   {width:100%}, and this file's own .input-row/.lf-connrow/.lf-nmini
+   rules) — that role now belongs to the wrap (the input inside just
+   flexes to fill whatever's left of it after the knob's fixed width), so
+   each of those rules is mirrored here targeting .lf-knob-wrap instead.
+   Contexts with no explicit width before (the audio patch modal's global
+   controls) need no override — auto-width wrapping behaves the same as
+   an unconstrained input did. */
+#controls .lf-knob-wrap {
+  width: 100%;
+}
+
+#controls .input-row .lf-knob-wrap {
+  width: 2.5rem;
+  flex: none;
+}
+
+#audio-patch-modal .lf-connrow .lf-knob-wrap {
+  width: 50px;
+}
+
+#audio-patch-modal .lf-node .lf-nmini .lf-knob-wrap {
+  width: 33%;
+}
+
+/* The mu/sigma marker's prism halo (box-shadow) reads as an unwanted
+   glow around the pin itself; keep the marker as a plain dot. */
+#controls .lf-heat .lf-dot {
+  box-shadow: none;
+  /* iOS Safari compositing bug: an absolutely-positioned child with no
+     transform/compositing layer of its own, inside an ancestor
+     (#controls) that has both overflow-y:auto and an active transform
+     transition (its open/close scale animation), reliably renders for a
+     frame or two and then disappears once that transition settles —
+     WebKit fails to keep the child's paint after the ancestor's
+     compositing layer updates. Forcing the dot onto its own layer avoids
+     this; translateZ(0) doesn't interfere with the left/top positioning
+     JS sets on this element every drawMap() call. */
+  transform: translateZ(0);
+  -webkit-transform: translateZ(0);
+}
+
+/* button.trk in the mockup is raised at rest and flips to the .lf-pressed
+   bevel on :active — ui-components.css's #controls button rule has no
+   border or :active state at all. */
+#controls button {
+  border-top: 1px solid var(--bevel-light);
+  border-left: 1px solid var(--bevel-light);
+  border-right: 1px solid var(--bevel-dark);
+  border-bottom: 1px solid var(--bevel-dark);
+}
+
+#controls button:active {
+  border-top: 1px solid var(--bevel-dark);
+  border-left: 1px solid var(--bevel-dark);
+  border-right: 1px solid var(--bevel-light);
+  border-bottom: 1px solid var(--bevel-light);
+  box-shadow: none;
+}
+
+/* Replaces ui-components.css's prism glow-on-hover (box-shadow) with a
+   plain background lighten — simpler, less visually loud. */
+#controls button:hover {
+  background: #1c1c1c;
+  box-shadow: none;
+}
+
+/* Replaces ui-components.css's prism glow-on-focus (box-shadow) with a
+   plain solid outline — keeps focus visible (still required for
+   accessibility) without the chromatic shadow. This also unmasks the
+   button emboss-reversal on click: the glow was rendered right on top
+   of the 1px border, making the light/dark swap in #controls
+   button:active above hard to actually see. */
+.lf-sunk:focus-visible,
+.lf-raise:focus-visible,
+input:focus-visible,
+select:focus-visible,
+button:focus-visible {
+  box-shadow: none;
+  outline: 1px solid var(--text-dim);
+  outline-offset: 1px;
+}
+
+#controls input[type="range"]:focus-visible::-webkit-slider-thumb {
+  box-shadow: none;
+  outline: 1px solid var(--text-dim);
+}
+
+#mu-sigma-status {
+  position: absolute;
+  top: 4px;
+  left: 4px;
+  font-size: 0.65rem;
+  color: #ccc;
+  background: rgba(0, 0, 0, 0.5);
+  padding: 0.1rem 0.35rem;
+  border-radius: 3px;
+  pointer-events: none;
+}
+
+#presets-control .lf-presetrow input[type="text"] {
+  flex: 1;
+  width: auto;
+}
+
+/* Larger touch targets on touch devices: default sizes are tuned for a
+   mouse pointer and are too small/close together to hit reliably with a
+   finger. */
+@media (pointer: coarse) {
+  #controls {
+    width: min(400px, 92vw);
+    font-size: 1.05rem;
+  }
+
+  #controls input[type="number"],
+  #controls select,
+  #presets-control input[type="text"] {
+    min-height: 2.75rem;
+    font-size: 1rem;
+  }
+
+  #controls input[type="range"] {
+    height: 2rem;
+  }
+
+  #controls input[type="checkbox"] {
+    width: 1.5rem;
+    height: 1.5rem;
+  }
+
+  .input-row {
+    gap: 0.75rem;
+  }
+
+  /* A 9px knob is a mouse-hover-scale target; widen it to something
+     actually tappable/draggable with a finger. */
+  #controls .lf-knob {
+    flex-basis: 1.5rem;
+    width: 1.5rem;
+  }
+}
+
+#error {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 3;
+  color: #ff6b6b;
+  background: rgba(17, 17, 17, 0.9);
+  font-size: 0.85rem;
+  padding: 0.5rem 1rem;
+  text-align: center;
+}
+
+#error:empty {
+  display: none;
+}
+
+/* Toggled via "p" only (see main.js) — deliberately not wired to the
+   double-tap gesture, and hidden outright on touch devices below, since
+   it's a desktop benchmarking tool. Not part of the lf- redesign scope
+   (DESIGN_SPEC.md targets only #controls/#audio-patch-modal), so it
+   keeps its original standalone styling. */
+#perf-hud {
+  position: fixed;
+  top: 1rem;
+  right: 1rem;
+  z-index: 2;
+  background: rgba(17, 17, 17, 0.85);
+  color: #ccc;
+  font-size: 0.75rem;
+  font-variant-numeric: tabular-nums;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid #444;
+  border-radius: 6px;
+  display: none;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+#perf-hud.open {
+  display: flex;
+}
+
+#perf-hud button {
+  margin-top: 0.3rem;
+}
+
+@media (pointer: coarse) {
+  #perf-hud.open {
+    display: none;
+  }
+}
+
+/* ============================================================
+   #audio-patch-modal — same centered-modal positioning treatment
+   as #controls; surface/bevel/typography come from the lf- system.
+   ============================================================ */
+#audio-patch-modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  z-index: 5;
+  width: min(640px, 94vw);
+  max-height: 88vh;
+  overflow-y: auto;
+  transform: translate(-50%, -50%) scale(0.95);
+  opacity: 0;
+  pointer-events: none;
+  transition: transform 0.15s ease, opacity 0.15s ease;
+}
+
+#audio-patch-modal.open {
+  transform: translate(-50%, -50%) scale(1);
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* The drag-in-progress cable can track the pointer outside the graph's
+   own box (e.g. dragging toward the connection list below); let it
+   render past the SVG edge instead of clipping mid-drag. */
+#audio-patch-modal svg.lf-cables {
+  overflow: visible;
+}
+
+/* Fixed height + its own scroll, rather than letting the row count
+   resize the whole modal — adding/removing a connection would otherwise
+   change the modal's total height (and, since the graph sits above this
+   list, everything above it would shift too, even though the graph
+   itself didn't change size). */
+#audio-patch-connections {
+  height: 120px;
+  overflow-y: auto;
+}
+
+/* Integration fix: same rationale as the #controls block above —
+   1-tracker-panel.html (the source-of-truth mockup) bevels .lf-node
+   directly; ui-components.css's extracted rule omits the border. (Its
+   .lf-nmini inputs are covered by the shared
+   "#audio-patch-modal input[type=number]" rule above.) */
+#audio-patch-modal .lf-node {
+  border-top: 1px solid var(--bevel-dark);
+  border-left: 1px solid var(--bevel-dark);
+  border-right: 1px solid var(--bevel-light);
+  border-bottom: 1px solid var(--bevel-light);
+}
+
+/* Integration fix: ui-components.css styles .lf-connrow input and
+   .lf-nmini input (background/color/font-size) but never .lf-globals
+   input — the FLOOR RISE/CEIL FALL/RADIUS DEBOUNCE/DEPTH % fields were
+   falling through to the browser's own default input chrome (light
+   background, dark text) instead of the dark theme every other field
+   uses. Matches .lf-connrow input's treatment, the closest sibling case
+   (a bare labeled number field, not a mini triplet). */
+#audio-patch-modal .lf-globals input {
+  background: var(--surface-3);
+  color: var(--value);
+  font-size: 10px;
+  padding: 2px;
+}
+
+/* Not part of the vendored design system: the rubber-band line shown
+   while dragging a new connection, before it's dropped on a port. */
+#audio-patch-modal .lf-drag-line {
+  stroke: var(--text-dim);
+  stroke-width: 1.5;
+  stroke-dasharray: 3 3;
+  fill: none;
+}
+
+/* Wide invisible stroke so the ~1px cable core is actually clickable;
+   see redrawCables() in main.js. Reddens the visible core on hover as
+   a delete affordance. */
+#audio-patch-modal .lf-cable-hit {
+  stroke: transparent;
+  stroke-width: 14;
+  fill: none;
+  cursor: pointer;
+  pointer-events: stroke;
+}
+
+#audio-patch-modal .lf-cable-hit:hover + g + path {
+  stroke: var(--ca-r);
+  opacity: 1;
+}
+
+@media (pointer: coarse) {
+  #audio-patch-modal {
+    font-size: 1rem;
+  }
+
+  #audio-patch-modal .lf-port {
+    width: 18px;
+    height: 18px;
+    margin-top: -9px;
+  }
+
+  #audio-patch-modal .lf-col.lf-src .lf-port {
+    right: -9px;
+  }
+
+  #audio-patch-modal .lf-col.lf-tgt .lf-port {
+    left: -9px;
+  }
+
+  #audio-patch-modal .lf-node input,
+  #audio-patch-modal .lf-connrow input,
+  #audio-patch-modal .lf-globals input {
+    min-height: 2rem;
+  }
+
+  /* A 9px knob is a mouse-hover-scale target; widen it to something
+     actually tappable/draggable with a finger. */
+  #audio-patch-modal .lf-knob {
+    flex-basis: 1.5rem;
+    width: 1.5rem;
+  }
+}
+
+/* ============================================================
+   Audio visualization stage 1 (docs/design/audio-visualization-brainstorm.md)
+   A2 per-source meters, A5 mini meter row, B3 freeze button.
+   ============================================================ */
+
+/* A2: per-source VU meter — fill is a scaleX transform (compositor-only,
+   see main.js's updateAudioPatchMeters); floor/ceil/peak ticks are
+   absolutely-positioned 1px marks moved via `left`, updated at the same
+   tick as the fill (cheap: 4 nodes, out-of-flow elements only). */
+#audio-patch-modal .lf-meter {
+  position: relative;
+  height: 6px;
+  margin-top: 6px;
+  background: var(--surface-3);
+  overflow: hidden;
+}
+
+#audio-patch-modal .lf-meter-fill {
+  position: absolute;
+  inset: 0;
+  transform-origin: left center;
+  transform: scaleX(0);
+  /* --lf-source-color is set per-node in buildAudioPatchUI() (main.js),
+     matching A1's spectrum band colors (SOURCE_COLORS) so a source reads
+     as the same color in its meter as it does on the spectrum strip. */
+  background: var(--lf-source-color, var(--ca-c));
+  opacity: 0.85;
+}
+
+#audio-patch-modal .lf-meter-floor,
+#audio-patch-modal .lf-meter-ceil {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  left: 0;
+  background: var(--line-bright);
+}
+
+#audio-patch-modal .lf-meter-peak {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  left: 0;
+  background: var(--value);
+}
+
+/* Clip LED: lit briefly whenever the envelope saturates at 1.0 — under
+   adaptive normalization that means "this band's ceiling just re-locked",
+   a genuinely useful event rather than plain clipping. */
+#audio-patch-modal .lf-meter-clip {
+  position: absolute;
+  top: -1px;
+  right: -1px;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--line-bright);
+}
+
+#audio-patch-modal .lf-meter-clip.is-clip {
+  background: var(--ca-r);
+  box-shadow: -1px 0 3px var(--ca-r), 1px 0 3px var(--ca-c);
+}
+
+/* B2 (audio-visualization-brainstorm.md): ~10s scrolling envelope history
+   lane per source, right under its meter. Fixed internal resolution
+   (200x28, set via width/height attributes in main.js's node template),
+   CSS-stretched to the node's content width — same pattern as the
+   mu/sigma map and A1 spectrum canvases. */
+#audio-patch-modal .lf-history {
+  display: block;
+  width: 100%;
+  height: 28px;
+  margin-top: 6px;
+  background: var(--surface-3);
+}
+
+/* B3: freeze button — prism accent while active, matching the "accent =
+   live/focal" rule (a frozen meter reading is the focal state here). */
+#audio-patch-header .lf-headbtns {
+  display: flex;
+  gap: 10px;
+}
+
+#audio-patch-freeze.is-frozen {
+  color: var(--text);
+  text-shadow: -1px 0 var(--ca-r), 1px 0 var(--ca-c);
+}
+
+/* C4: mute is a warning/panic state, not a focal one — pure red rather
+   than the neutral prism accent used for "live/focal" elsewhere, so it
+   reads distinctly from FREEZE's active state. */
+#audio-patch-mute.is-muted {
+  color: var(--text);
+  text-shadow: -1px 0 3px var(--ca-r), 1px 0 3px var(--ca-r);
+}
+
+/* A5: always-on mini meter row in the "09.audio reactive" control row —
+   the only Group A view visible during normal (non-modal) sim use, so it
+   stays hidden whenever the row isn't active (checkbox off) rather than
+   just whenever audio is silent. */
+#controls .lf-check .lf-mini-meter {
+  display: none;
+  align-items: flex-end;
+  gap: 2px;
+  height: 12px;
+  margin: 0 8px;
+}
+
+#controls .lf-check.is-active .lf-mini-meter {
+  display: flex;
+}
+
+#controls .lf-check .lf-mini-bar {
+  position: relative;
+  width: 6px;
+  height: 100%;
+  background: var(--surface-3);
+  overflow: hidden;
+}
+
+#controls .lf-check .lf-mini-fill {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 100%;
+  transform-origin: bottom center;
+  transform: scaleY(0);
+  background: var(--ca-c);
+  opacity: 0.85;
+}
+
+/* Per-source colors are set directly on each bar's inline style from
+   SOURCE_COLORS (main.js, where the mini meter refs are cached) rather
+   than duplicated here as literal per-source CSS hexes — that duplication
+   was a real drift hazard (see git history: the mini meter and the A2
+   modal meters visibly disagreed on pitch's color because of it). One
+   source of truth now. */
+
+/* D1 (audio-visualization-brainstorm.md): the pitch source's HOLD toggle
+   — only node with a 4th control row, so it's not part of the shared
+   .lf-nmini treatment. Same weight/spacing as .lf-nmini for visual
+   consistency with the rest of the node card. */
+#audio-patch-modal .lf-pitch-hold {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 6px;
+  font-size: 9px;
+  color: var(--text-dim);
+}
+
+/* B1 (audio-visualization-brainstorm.md): glowing orbs riding each cable's
+   own curve via CSS motion-path (offset-path set once per orb in
+   renderCable; never touched per frame). Up to 4 orbs per cable, each
+   paused-and-invisible at rest; main.js's updateCableFlow() only ever
+   toggles .is-live on the orb *group* — a binary "is this source making
+   sound" indicator, not a level meter (that's A2/A5's job), so every live
+   cable runs the same fixed speed/density. No path data, no per-frame JS.
+   Replaced an earlier marching-dashoffset version that read as an
+   illegible blur at normal song tempo. */
+@keyframes lf-cable-orb-move {
+  from {
+    offset-distance: 0%;
+    opacity: 0;
+  }
+  4% {
+    opacity: 1;
+  }
+  96% {
+    opacity: 1;
+  }
+  to {
+    offset-distance: 100%;
+    opacity: 0;
+  }
+}
+
+/* Fixed speed for every live cable — orbs are a binary "sound is
+   present" indicator now, not a level meter, so this never changes at
+   runtime (see main.js's updateCableFlow()).
+   Group opacity is the real fade in/out (transition, driven by .is-live);
+   see the comment above updateCableFlow() in main.js for why the fade
+   lives here and not on each orb's animation-play-state directly. */
+#audio-patch-modal .lf-cable-orbs {
+  --lf-cable-duration: 4s;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+
+#audio-patch-modal .lf-cable-orbs.is-live {
+  opacity: 1;
+}
+
+#audio-patch-modal .lf-cable-orb {
+  offset-rotate: 0deg;
+  animation-name: lf-cable-orb-move;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+  animation-duration: var(--lf-cable-duration);
+  animation-play-state: paused;
+  opacity: 0;
+}
+
+/* Position animation only actually needs to run while the group is
+   visible — saves the animation engine's work on every silent cable,
+   same intent as the CPU concerns raised for the meter tick throttle. */
+#audio-patch-modal .lf-cable-orbs.is-live .lf-cable-orb {
+  animation-play-state: running;
+}
+
+/* Evenly spaced around the shared travel time via negative delays —
+   staggering by a fraction of the *current* duration (not a fixed
+   seconds value) keeps the spacing even as speed changes with signal
+   level. */
+#audio-patch-modal .lf-cable-orb:nth-child(1) {
+  animation-delay: calc(var(--lf-cable-duration) * -0 / 4);
+}
+#audio-patch-modal .lf-cable-orb:nth-child(2) {
+  animation-delay: calc(var(--lf-cable-duration) * -1 / 4);
+}
+#audio-patch-modal .lf-cable-orb:nth-child(3) {
+  animation-delay: calc(var(--lf-cable-duration) * -2 / 4);
+}
+#audio-patch-modal .lf-cable-orb:nth-child(4) {
+  animation-delay: calc(var(--lf-cable-duration) * -3 / 4);
+}
+
+/* A1 (audio-visualization-brainstorm.md): spectrum analyzer + draggable
+   band-edge strip. Fixed internal canvas resolution (600x64, set via the
+   width/height attributes in index.html), stretched to the modal's width
+   via CSS — same fixed-resolution/CSS-stretch pattern the mu/sigma map
+   canvas already uses, so pointer math in main.js can reuse that same
+   getBoundingClientRect-ratio conversion. All drawing is canvas-internal;
+   nothing here is animated, so there's no per-frame CSS cost, only
+   main.js's own throttled redraw (see updateAudioPatchMeters). */
+#audio-spectrum-wrap {
+  margin-bottom: 2px;
+  background: var(--surface-3);
+}
+
+#audio-spectrum {
+  display: block;
+  width: 100%;
+  height: 64px;
+}
+
+/* B4: note-name notches, as real DOM elements just below the canvas
+   (built once in main.js's buildSpectrumAxisLabels — positions are a
+   static percentage of the fixed axis, not data-driven, so this never
+   needs to redraw per tick like the canvas contents above it do). */
+#audio-spectrum-axis {
+  position: relative;
+  height: 12px;
+  margin-bottom: 14px;
+}
+
+#audio-spectrum-axis .lf-spectrum-note {
+  position: absolute;
+  top: 0;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-size: 9px;
+  color: var(--text-dim);
+  white-space: nowrap;
+}
+
+#audio-spectrum-axis .lf-spectrum-note::before {
+  content: '';
+  width: 1px;
+  height: 4px;
+  background: var(--line-bright);
+  margin-bottom: 2px;
+}
+

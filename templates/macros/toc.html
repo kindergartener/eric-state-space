@@ -1,0 +1,20 @@
+{% component toc(page) %}
+<nav id="page-toc" aria-label="Table of contents">
+  <p class="toc-label">{{ page.title }}</p>
+  <ul class="toc-list">
+    <li><a href="{{ page.permalink }}">(Top)</a></li>
+    {% for h1 in page.toc %}
+    <li>
+      <a href="{{ h1.permalink }}">{{ h1.title }}</a>
+      {% if h1.children %}
+      <ul class="toc-sublist">
+        {% for h2 in h1.children %}
+        <li><a href="{{ h2.permalink }}">{{ h2.title }}</a></li>
+        {% endfor %}
+      </ul>
+      {% endif %}
+    </li>
+    {% endfor %}
+  </ul>
+</nav>
+{% endcomponent toc %}

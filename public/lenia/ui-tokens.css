@@ -1,0 +1,54 @@
+/*
+  ui-tokens.css
+  Design tokens for the Lenia field UI (parameter menu + audio patch modal).
+  Palette: monochrome (black/white/gray) with a single accent — a faded
+  prism / chromatic-aberration fringe used only on focal or "live" elements.
+  Import this before ui-components.css.
+*/
+
+:root{
+  /* ---- surfaces ---- */
+  --bg:        #050505;   /* app background */
+  --panel:     #111111;   /* modal / card surface */
+  --surface-2: #0b0b0b;   /* nested surfaces (nodes, screens) */
+  --surface-3: #020202;   /* recessed input backgrounds */
+
+  /* ---- borders (flat, used only where a bevel isn't appropriate) ---- */
+  --line:        #242424;
+  --line-bright: #3a3a3a;
+
+  /* ---- text ---- */
+  --text:      #e9e9e6;   /* primary labels */
+  --text-dim:  #767671;   /* secondary labels, field names, idx numbers */
+  --value:     #f2ede3;   /* live numeric readouts (slightly warm off-white) */
+
+  /* ---- bevel: two-tone depth on every edge ----
+     dark = shadow side, light = highlight side.
+     "sunk"  (recessed): dark on top/left, light on bottom/right
+     "raise" (proud):    light on top/left, dark on bottom/right   */
+  --bevel-dark:  rgba(0, 0, 0, 0.75);
+  --bevel-light: rgba(255, 255, 255, 0.15);
+
+  /* ---- prism / chromatic-aberration accent ----
+     The ONLY color in the system. Use sparingly: live/active state,
+     ports, cables, the landscape screen glow. Never use as a flat fill. */
+  --ca-r: rgba(255, 70, 70, 0.65);   /* red   */
+  --ca-o: rgba(255, 175, 70, 0.55);  /* amber */
+  --ca-g: rgba(90, 255, 140, 0.6);   /* green */
+  --ca-c: rgba(80, 210, 255, 0.6);   /* cyan  */
+  --ca-b: rgba(120, 140, 255, 0.55); /* blue  */
+  --ca-v: rgba(190, 110, 255, 0.5);  /* violet*/
+
+  /* ---- type ---- */
+  --font-mono: "JetBrains Mono", "IBM Plex Mono", ui-monospace, Consolas, monospace;
+  --fs-body:  12px;
+  --fs-label: 10px;
+  --fs-small: 9px;
+
+  /* ---- spacing ---- */
+  --space-1: 4px;
+  --space-2: 6px;
+  --space-3: 8px;
+  --space-4: 10px;
+  --space-5: 14px;
+}

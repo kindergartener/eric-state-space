@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block content %}
+{{<page_header page />}}
+{{ page.content | safe }}
+
+<div class="penrose-grid">
+  {% for asset in page.assets | sort %}
+    {% if asset is matching(pat="[.](svg)$") %}
+      {% set name = asset | split(pat="/") | last | replace(from=".svg", to="") | replace(from="-", to=" ") %}
+      <div class="penrose-tile">
+        <img class="zoomable" src="{{ get_url(path=asset) }}" title="{{ name }}" alt="{{ name }}">
+      </div>
+    {% endif %}
+  {% endfor %}
+</div>
+{% endblock content %}

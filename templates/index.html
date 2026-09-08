@@ -1,25 +1,104 @@
 {% extends "base.html" %}
 
 {% block content %}
+<div id="abstract-box" class="bento-cell">
+  <div class="bento-titlebar">
+    <span class="bento-title">Eric State Space</span>
+  </div>
+  <div id="abstract-banner">
+    <img src="/images/pml-s05.png" alt="banner"></img>
+  </div>
+  <div id="abstract" class="bento-content">
+    <p>
+      Hi, I'm <strong>Eric</strong>. I write code and occasionally proofs, rarely at the same time. This site started as
+      a typical dev portfolio
+      but has since become something more personal, a digital garden of sorts.
+    </p>
+    <p>
+      <span class="smallcaps">Navigation</span>: See <a href="/site">about this site</a> for information about the
+      design, process, and philosophy behind this website.
+      Check out some of my <a href="/projects">projects</a> or my <a href="/blog">blog posts</a>. If you're feeling
+      especially curious, you can read all <a href="/me">about me</a>.
+      Bored? Peruse my <a href="/curios">curio cabinet</a>. For all other inquiries keep scrolling.
+    </p>
+  </div>
+</div>
 
-{% set blog = get_section(path="blog/_index.md") %}
-{% set posts = blog.pages | sort(attribute="date") | reverse | slice(end=config.extra.recent_posts) %}
+{% set blog_section = get_section(path="blog/_index.md") %}
+{% set curios_section = get_section(path="curios/_index.md") %}
+{% set links_page = get_page(path="links.md") %}
 
-{{
-  about_macros::about()
-}}
+<div id="bento-box">
+  <div class="bento-cell" id="bento-blog">
+    <div class="bento-titlebar">
+      <span class="bento-title"><a href="/blog">Blog</a></span>
+    </div>
+    <div class="bento-content">
+      {{<blog_list pages={blog_section.pages[:5]} total={blog_section.pages | length} more_url="/blog" />}}
+    </div>
+  </div>
+  <div class="bento-cell" id="bento-curios">
+    <div class="bento-titlebar">
+      <span class="bento-title"><a href="/curios">Curios</a></span>
+    </div>
+    <div class="bento-content">
+      <div class="curios-grid">
+        {% for curio in curios_section.pages %}
+        {{<curio_tile curio />}}
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+  <div class="bento-cell" id="bento-links">
+    <div class="bento-titlebar">
+      <span class="bento-title"><a href="/links">Links</a></span>
+    </div>
+    <div class="bento-content">
+      <ul class="bento-list" id="bento-links-list">
+        {% set total_links = links_page.extra.links | length %}
+        {% if total_links > 10 %}
+          {% set shown_links = 10 %}
+        {% else %}
+          {% set shown_links = total_links %}
+        {% endif %}
+        {% set link_offset = get_random(start=0, end=total_links) %}
+        {% for i in range(end=shown_links) %}
+        {% set link = links_page.extra.links[(i + link_offset) % total_links] %}
+        <li><a href="{{ link.url }}" target="_blank" rel="noopener noreferrer">{{<link_label link />}}</a></li>
+        {% endfor %}
+        {% if total_links > 10 %}
+        <li class="bento-more-item">
+          <div class="bento-more-footer">
+            <a class="blog-more-label" href="/links">More
+              <svg class="blog-more-arrow" aria-hidden="true">
+                <use href="#chevron-right-icon"></use>
+              </svg>
+            </a>
+          </div>
+        </li>
+        {% endif %}
+      </ul>
+    </div>
+  </div>
+</div>
 
-{{ post_macros::post_list(
-    pages=posts,
-    summary_words=config.extra.summary_fallback_words | default(value=200),
-    class="posts",
-    tags_sep=""
-) }}
-
-{% if posts | length > config.extra.recent_posts %}
-  <p class="older-link">
-    <a href="{{ blog.permalink | safe }}">Check out older posts →</a>
-  </p>
-{% endif %}
-
+<div class="bento-cell" id="buttons-box">
+  <div class="bento-titlebar">
+    <span class="bento-title"><a href="/links#buttons">Buttons</a></span>
+  </div>
+  <div class="bento-content" id="button-content">
+    <div class="button-marquee" id="button-marquee" data-speed="{{ config.extra.marquee_speed }}">
+      <div class="marquee-track">
+        {% for button in links_page.extra.buttons %}
+        {{<button_tile button suppress_drag={true} />}}
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</div>
 {% endblock content %}
+
+{% block scripts %}
+<script src="{{ get_url(path="js/marquee.js", trailing_slash=false) }}" defer></script>
+<script src="{{ get_url(path="js/bento-links-fit.js", trailing_slash=false) }}" defer></script>
+{% endblock scripts %}

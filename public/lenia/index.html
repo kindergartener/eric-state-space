@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
+  <title>Continuous Lenia</title>
+  <link rel="icon" type="image/svg+xml" href="https://ericstate.space/icons/logo-bg.svg">
+  <link rel="stylesheet" href="https://ericstate.space/lenia/ui-tokens.css" />
+  <link rel="stylesheet" href="https://ericstate.space/lenia/ui-components.css" />
+  <link rel="stylesheet" href="https://ericstate.space/lenia/style.css" />
+</head>
+<body>
+  
+  <!-- <script data-goatcounter="https://onigirienthusiast.goatcounter.com/count" async src="/count.js"></script> -->
+
+  <div id="app">
+    <canvas id="lenia-canvas"></canvas>
+    <div id="perf-hud">
+      <div>step <span id="perf-step-ms">-</span> ms</div>
+      <div>render <span id="perf-render-ms">-</span> ms</div>
+      <div>gpu <span id="perf-gpu-ms">-</span> ms</div>
+      <div>frame <span id="perf-frame-ms">-</span> ms</div>
+      <div>&nbsp;&nbsp;fft-fwd <span id="perf-fft-fwd-ms">-</span> ms</div>
+      <div>&nbsp;&nbsp;multiply <span id="perf-multiply-ms">-</span> ms</div>
+      <div>&nbsp;&nbsp;fft-inv <span id="perf-fft-inv-ms">-</span> ms</div>
+      <div>&nbsp;&nbsp;growth <span id="perf-growth-ms">-</span> ms</div>
+      <div>active bbox <span id="perf-active-bbox">-</span></div>
+      <div>step mode <span id="perf-step-mode">-</span></div>
+      <div>bass <span id="perf-bass">-</span></div>
+      <div>mid <span id="perf-mid">-</span></div>
+      <div>treble <span id="perf-treble">-</span></div>
+      <div>volume <span id="perf-volume">-</span></div>
+      <button id="perf-capture">capture 2s to console</button>
+    </div>
+    <div id="controls" class="lf-raise">
+      <div class="lf-modhead">
+        <span>01.LENIA FIELD</span>
+      </div>
+      <div id="mu-sigma-control">
+        <div id="mu-sigma-map-wrap" class="lf-heat">
+          <canvas id="mu-sigma-map" width="220" height="160"></canvas>
+          <div id="mu-sigma-dot" class="lf-dot"></div>
+          <div id="mu-sigma-status"></div>
+        </div>
+        <div id="mu-sigma-inputs" class="lf-grid2">
+          <label class="lf-field lf-groove">
+            <span class="lf-fname">01.mu</span>
+            <input id="mu-input" class="lf-fval" type="number" min="0" max="0.5" step="0.001" value="0.15" />
+          </label>
+          <label class="lf-field lf-groove">
+            <span class="lf-fname">02.sigma</span>
+            <input id="sigma-input" class="lf-fval" type="number" min="0" max="0.05" step="0.0001" value="0.014" />
+          </label>
+        </div>
+      </div>
+      <label class="lf-field lf-groove">
+        <span class="lf-fname"><span class="lf-idx">03.</span>dt</span>
+        <span class="input-row">
+          <input id="dt" type="range" min="0.01" max="1" step="0.01" value="0.1" />
+          <input id="dt-input" type="number" min="0.01" max="1" step="0.01" value="0.1" />
+        </span>
+      </label>
+      <label class="lf-field lf-groove">
+        <span class="lf-fname"><span class="lf-idx">04.</span>radius</span>
+        <span class="input-row">
+          <input id="radius" type="range" min="2" max="30" step="1" value="13" />
+          <input id="radius-input" type="number" min="2" max="30" step="1" value="13" />
+        </span>
+      </label>
+      <label class="lf-field lf-groove">
+        <span class="lf-fname"><span class="lf-idx">05.</span>brush radius</span>
+        <span class="input-row">
+          <input id="brush-radius" type="range" min="1" max="40" step="1" value="8" />
+          <input id="brush-radius-input" type="number" min="1" max="40" step="1" value="8" />
+        </span>
+      </label>
+      <div class="lf-grid2 lf-groove">
+        <label class="lf-field">
+          <span class="lf-fname">06.growth</span>
+          <select id="growth-fn">
+            <option value="0">Exponential</option>
+            <option value="1" selected>Polynomial</option>
+            <option value="2">Rectangular</option>
+          </select>
+        </label>
+        <label class="lf-field">
+          <span class="lf-fname">07.kernel core</span>
+          <select id="kernel-core">
+            <option value="0">Exponential</option>
+            <option value="1" selected>Polynomial</option>
+            <option value="2">Rectangular</option>
+          </select>
+        </label>
+      </div>
+      <label class="lf-field lf-groove">
+        <span class="lf-fname">08.dither</span>
+        <span class="input-row">
+          <input id="dither-enabled" type="checkbox" />
+          <input id="dither-levels" type="range" min="2" max="8" step="1" value="4" />
+        </span>
+      </label>
+      <label class="lf-check lf-groove">
+        <input id="audio-reactive-enabled" type="checkbox" autocomplete="off" />
+        <span>09.audio reactive</span>
+        <div id="audio-mini-meter" class="lf-mini-meter">
+          <span class="lf-mini-bar" data-mini-bar="bass"><span class="lf-mini-fill"></span></span>
+          <span class="lf-mini-bar" data-mini-bar="mid"><span class="lf-mini-fill"></span></span>
+          <span class="lf-mini-bar" data-mini-bar="treble"><span class="lf-mini-fill"></span></span>
+          <span class="lf-mini-bar" data-mini-bar="volume"><span class="lf-mini-fill"></span></span>
+          <span class="lf-mini-bar" data-mini-bar="pitch"><span class="lf-mini-fill"></span></span>
+        </div>
+        <button id="audio-patch-open" type="button">&#9656; AUDIO PATCH&hellip;</button>
+      </label>
+      <span class="lf-field lf-groove">
+        <div id="presets-control">
+          <span class="lf-fname">0A.presets</span>
+          <select id="preset-select">
+            <option value="">-- choose --</option>
+          </select>
+          <div class="lf-presetrow">
+            <input id="preset-name" type="text" placeholder="preset name" />
+            <button id="preset-save">Save</button>
+          </div>
+          <div class="lf-presetrow">
+            <button id="preset-delete">Delete</button>
+            <button id="preset-export">Export</button>
+            <button id="preset-import-trigger">Import</button>
+          </div>
+          <input id="preset-import-file" type="file" accept="application/json" hidden />
+        </div>
+      </span>
+      <label class="lf-field">
+        <span class="lf-fname">0B.pattern</span>
+        <select id="pattern-select">
+          <option value="">-- choose --</option>
+          <option value="patterns/orbium.json">Orbium</option>
+        </select>
+      </label>
+    </div>
+    <div id="audio-patch-modal" class="lf-raise">
+      <div id="audio-patch-header" class="lf-head lf-groove">
+        <span>AUDIO PATCH &mdash; MOD MATRIX</span>
+        <div class="lf-headbtns">
+          <button id="audio-patch-mute" type="button" class="lf-close" aria-label="Mute cables (panic)" title="Mute cables — keyboard shortcut: M">[ MUTE ]</button>
+          <button id="audio-patch-freeze" type="button" class="lf-close" aria-label="Freeze meters">[ FREEZE ]</button>
+          <button id="audio-patch-close" type="button" class="lf-close" aria-label="Close">[ X ]</button>
+        </div>
+      </div>
+      <div id="audio-spectrum-wrap" class="lf-sunk">
+        <canvas id="audio-spectrum" width="600" height="64"></canvas>
+      </div>
+      <div id="audio-spectrum-axis"></div>
+      <div id="audio-patch-graph" class="lf-graph">
+        <svg id="audio-patch-svg" class="lf-cables"></svg>
+        <div id="audio-patch-sources" class="lf-col lf-src"></div>
+        <div id="audio-patch-targets" class="lf-col lf-tgt"></div>
+      </div>
+      <div id="audio-patch-connections" class="lf-conns"></div>
+      <div id="audio-patch-global" class="lf-globals"></div>
+    </div>
+    <div id="error" role="alert"></div>
+  </div>
+  <script type="module" src="https://ericstate.space/lenia/main.js"></script>
+</body>
+</html>

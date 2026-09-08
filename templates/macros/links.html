@@ -1,0 +1,12 @@
+{% component link_label(link) %}
+{%- if link.title -%}
+  {{ link.title }}
+{%- else -%}
+  {%- set clean_url = link.url | replace(from="https://", to="") | replace(from="http://", to="") | replace(from="www.", to="") -%}
+  {%- if clean_url is ending_with(pat="/") -%}
+    {{ clean_url | truncate(length=clean_url | length - 1, end="") }}
+  {%- else -%}
+    {{ clean_url }}
+  {%- endif -%}
+{%- endif -%}
+{% endcomponent link_label %}

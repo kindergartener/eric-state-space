@@ -1,0 +1,80 @@
+{
+  "https://en.wikipedia.org/wiki/Exponentiation_by_squaring": {
+    "extract": "In mathematics and computer programming, exponentiating by squaring is a general method for fast computation of large positive integer powers of a number, or more generally of an element of a semigroup, like a polynomial or a square matrix.",
+    "page_url": "https://en.wikipedia.org/wiki/Exponentiation_by_squaring",
+    "thumbnail": null,
+    "title": "Exponentiation by squaring"
+  },
+  "https://en.wikipedia.org/wiki/Fibonacci_sequence": {
+    "extract": "In mathematics, the Fibonacci sequence is a sequence in which each element is the sum of the two elements that precede it. Numbers that are part of the Fibonacci sequence are known as Fibonacci numbers, commonly denoted Fn .",
+    "page_url": "https://en.wikipedia.org/wiki/Fibonacci_sequence",
+    "thumbnail": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/15/Fibonacci_Squares.svg/330px-Fibonacci_Squares.svg.png?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "title": "Fibonacci sequence"
+  },
+  "https://en.wikipedia.org/wiki/General-purpose_computing_on_graphics_processing_units": {
+    "extract": "General-purpose computing on graphics processing units is the use of a graphics processing unit (GPU), which typically handles computation only for computer graphics, to perform computation in applications traditionally handled by the central processing unit (CPU).",
+    "page_url": "https://en.wikipedia.org/wiki/General-purpose_computing_on_graphics_processing_units",
+    "thumbnail": null,
+    "title": "General-purpose computing on graphics processing units"
+  },
+  "https://en.wikipedia.org/wiki/Heat_death_of_the_universe": {
+    "extract": "The heat death of the universe is a scientific hypothesis regarding the ultimate fate of the universe which posits the universe will evolve to a state of no thermodynamic free energy and, having reached maximum entropy, will therefore be unable to sustain any further…",
+    "page_url": "https://en.wikipedia.org/wiki/Heat_death_of_the_universe",
+    "thumbnail": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ed/WMAP_2012.png/330px-WMAP_2012.png?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "title": "Heat death of the universe"
+  },
+  "https://en.wikipedia.org/wiki/Ichetucknee_Springs_State_Park": {
+    "extract": "Ichetucknee Springs State Park is a 2,241-acre (9.07 km2) Florida State Park and National Natural Landmark located 4 miles (6.4 km) northwest of Fort White off State Road 47 and State Road 238.",
+    "page_url": "https://en.wikipedia.org/wiki/Ichetucknee_Springs_State_Park",
+    "thumbnail": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9a/Head_Spring.jpg/330px-Head_Spring.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "title": "Ichetucknee Springs State Park"
+  },
+  "https://en.wikipedia.org/wiki/Karatsuba_algorithm": {
+    "extract": "The Karatsuba algorithm is a fast multiplication algorithm for integers. It was discovered by Anatoly Karatsuba in 1960 and published in 1962.",
+    "page_url": "https://en.wikipedia.org/wiki/Karatsuba_algorithm",
+    "thumbnail": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/03/Karatsuba_multiplication.svg/330px-Karatsuba_multiplication.svg.png?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "title": "Karatsuba algorithm"
+  },
+  "https://en.wikipedia.org/wiki/Mandelbrot_set": {
+    "extract": "The Mandelbrot set is a two-dimensional set. It is defined in the complex plane as the complex numbers  for which the function  does not diverge to infinity when iterated starting at .",
+    "page_url": "https://en.wikipedia.org/wiki/Mandelbrot_set",
+    "thumbnail": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/21/Mandel_zoom_00_mandelbrot_set.jpg/330px-Mandel_zoom_00_mandelbrot_set.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "title": "Mandelbrot set"
+  },
+  "https://en.wikipedia.org/wiki/Metropolis%E2%80%93Hastings_algorithm": {
+    "extract": "In statistics and statistical physics, the Metropolis–Hastings algorithm is a Markov chain Monte Carlo (MCMC) method for obtaining a sequence of random samples from a probability distribution from which direct sampling is difficult.",
+    "page_url": "https://en.wikipedia.org/wiki/Metropolis%E2%80%93Hastings_algorithm",
+    "thumbnail": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/de/Flowchart-of-Metropolis-Hastings-M-H-algorithm-for-the-parameter-estimation-using-the.png/330px-Flowchart-of-Metropolis-Hastings-M-H-algorithm-for-the-parameter-estimation-using-the.png?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "title": "Metropolis–Hastings algorithm"
+  },
+  "https://en.wikipedia.org/wiki/Roger_Penrose": {
+    "extract": "Sir Roger Penrose is an English mathematician, mathematical physicist, and philosopher of science. He is Emeritus Rouse Ball Professor of Mathematics at the University of Oxford, an emeritus fellow of Wadham College, Oxford, and an honorary fellow of St John's College,…",
+    "page_url": "https://en.wikipedia.org/wiki/Roger_Penrose",
+    "thumbnail": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d5/Roger_Penrose_at_Festival_della_Scienza_Oct_29_2011.jpg/330px-Roger_Penrose_at_Festival_della_Scienza_Oct_29_2011.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "title": "Roger Penrose"
+  },
+  "https://en.wikipedia.org/wiki/Sch%C3%B6nhage%E2%80%93Strassen_algorithm": {
+    "extract": "The Schönhage–Strassen algorithm is an asymptotically fast multiplication algorithm for large integers, published by Arnold Schönhage and Volker Strassen in 1971. It works by recursively applying fast Fourier transform (FFT) over the integers modulo .",
+    "page_url": "https://en.wikipedia.org/wiki/Sch%C3%B6nhage%E2%80%93Strassen_algorithm",
+    "thumbnail": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/69/Integer_multiplication_by_FFT.svg/330px-Integer_multiplication_by_FFT.svg.png?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "title": "Schönhage–Strassen algorithm"
+  },
+  "https://en.wikipedia.org/wiki/State-space_representation": {
+    "extract": "In control engineering and system identification, a state-space representation is a mathematical model of a physical system that uses state variables to track how inputs shape system behavior over time through first-order differential equations or difference equations.",
+    "page_url": "https://en.wikipedia.org/wiki/State-space_representation",
+    "thumbnail": null,
+    "title": "State-space representation"
+  },
+  "https://en.wikipedia.org/wiki/Theanine": {
+    "extract": "Theanine, also known as L-γ-glutamylethylamide, N5-ethyl-L-glutamine, or γ-glutamylethylamide, is a bioactive, non-proteinogenic amino acid similar to the proteinogenic amino acids glutamic acid and L-glutamine.",
+    "page_url": "https://en.wikipedia.org/wiki/Theanine",
+    "thumbnail": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c7/Theanine-3D-balls.png/330px-Theanine-3D-balls.png?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "title": "Theanine"
+  },
+  "https://en.wikipedia.org/wiki/Wikipedia": {
+    "extract": "Wikipedia is a free online encyclopedia written and maintained by a community of volunteers, known as Wikipedians, through open collaboration and the wiki software MediaWiki.",
+    "page_url": "https://en.wikipedia.org/wiki/Wikipedia",
+    "thumbnail": "https://upload.wikimedia.org/wikipedia/en/thumb/8/80/Wikipedia-logo-v2.svg/330px-Wikipedia-logo-v2.svg.png?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "title": "Wikipedia"
+  }
+}

@@ -1,14 +1,12 @@
-$spacing-25: 0.25rem;
-$spacing-50: 0.50rem;
-$spacing-100: 1rem;
-$spacing-150: 1.5rem;
-$spacing-200: 2rem;
-$spacing-300: 3rem;
-$spacing-400: 4rem;
+$body-max-width: 983px;
+$body-side-padding: 20px;
 
-$rounding: 8px;
+$breakpoint-phone: 600px;
+$breakpoint-tablet: 900px;
+$breakpoint-wide: 1700px;
 
-$content-width: 864px;
+$space-sm: 0.5rem;
+$space-md: 1rem;
+$space-lg: 2rem;
 
-$phone-max-width: 683px;
-$tablet-max-width: 899px;
+$toc-width: 300px;

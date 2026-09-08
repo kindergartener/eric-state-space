@@ -1,0 +1,15 @@
+{% component curio_tile(curio) %}
+{% if curio.extra.link %}
+<a href="{{ curio.extra.link }}" target="_blank" rel="noopener noreferrer" class="curio-tile">
+{% else %}
+<a href="{{ curio.permalink }}" class="curio-tile">
+{% endif %}
+  {% if curio.extra.thumbnail %}
+  <img src="{{ get_url(path=curio.extra.thumbnail, trailing_slash=false) }}" alt="{{ curio.title }}">
+  {% else %}
+  <svg viewBox="0 0 100 100">
+    <use href="#mobius-icon"></use>
+  </svg>
+  {% endif %}
+</a>
+{% endcomponent curio_tile %}
