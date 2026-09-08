@@ -6,6 +6,13 @@ export async function onRequestGet(context) {
   return Response.json(results);
 }
 
+const BLOCKLIST = ["viagra", "cialis", "casino", "xxx porn", "crypto airdrop"];
+
+function containsBlockedTerm(message) {
+  const lower = message.toLowerCase();
+  return BLOCKLIST.some((term) => lower.includes(term));
+}
+
 function validate(body) {
   const name = typeof body.name === "string" ? body.name.trim() : "";
   const url = typeof body.url === "string" ? body.url.trim() : "";
@@ -29,6 +36,10 @@ export async function onRequestPost(context) {
   const validated = validate(body);
   if (validated.error) {
     return Response.json({ error: validated.error }, { status: 400 });
+  }
+
+  if (containsBlockedTerm(validated.message)) {
+    return Response.json({ error: "Message rejected." }, { status: 400 });
   }
 
   const createdAt = Math.floor(Date.now() / 1000);
