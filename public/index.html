@@ -409,6 +409,22 @@
       </ul>
     </div>
   </div>
+  <div class="bento-cell" id="bento-guestbook">
+    <div class="bento-titlebar">
+      <span class="bento-title">Guestbook</span>
+    </div>
+    <div class="bento-content">
+      <form id="guestbook-form">
+        <input type="text" id="guestbook-name" name="name" maxlength="60" placeholder="Name (optional)">
+        <input type="url" id="guestbook-url" name="url" maxlength="300" placeholder="Your site (optional)">
+        <textarea id="guestbook-message" name="message" maxlength="500" placeholder="Leave a message" required></textarea>
+        <div class="cf-turnstile" data-sitekey="1x00000000000000000000AA"></div>
+        <button type="submit">Sign</button>
+        <p id="guestbook-error" hidden></p>
+      </form>
+      <ul class="bento-list" id="guestbook-list"></ul>
+    </div>
+  </div>
 </div>
 
 <div class="bento-cell" id="buttons-box">
@@ -553,6 +569,8 @@
     
 <script src="https://ericstate.space/js/marquee.js" defer></script>
 <script src="https://ericstate.space/js/bento-links-fit.js" defer></script>
+<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+<script src="https://ericstate.space/js/guestbook.js" defer></script>
 
 
   </main>

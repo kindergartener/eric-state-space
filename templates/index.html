@@ -80,6 +80,22 @@
       </ul>
     </div>
   </div>
+  <div class="bento-cell" id="bento-guestbook">
+    <div class="bento-titlebar">
+      <span class="bento-title">Guestbook</span>
+    </div>
+    <div class="bento-content">
+      <form id="guestbook-form">
+        <input type="text" id="guestbook-name" name="name" maxlength="60" placeholder="Name (optional)">
+        <input type="url" id="guestbook-url" name="url" maxlength="300" placeholder="Your site (optional)">
+        <textarea id="guestbook-message" name="message" maxlength="500" placeholder="Leave a message" required></textarea>
+        <div class="cf-turnstile" data-sitekey="{{ config.extra.turnstile_sitekey }}"></div>
+        <button type="submit">Sign</button>
+        <p id="guestbook-error" hidden></p>
+      </form>
+      <ul class="bento-list" id="guestbook-list"></ul>
+    </div>
+  </div>
 </div>
 
 <div class="bento-cell" id="buttons-box">
@@ -101,4 +117,6 @@
 {% block scripts %}
 <script src="{{ get_url(path="js/marquee.js", trailing_slash=false) }}" defer></script>
 <script src="{{ get_url(path="js/bento-links-fit.js", trailing_slash=false) }}" defer></script>
+<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+<script src="{{ get_url(path="js/guestbook.js", trailing_slash=false) }}" defer></script>
 {% endblock scripts %}
