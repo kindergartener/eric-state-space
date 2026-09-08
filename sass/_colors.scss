@@ -1,13 +1,27 @@
-$bone: #EEEEEE;
-$pvc: #DFDFDF;
-$egg: #D9D9D9;
-$silver: #C6C6C6;
-$ash: #6C6C6C;
-$jet: #333333;
+:root {
+  --color-bg: #fff;
+  --color-bg-rgb: 255, 255, 255;
+  --color-text: #000;
+  --color-text-secondary: #333;
+  --color-text-muted: #737373;
+  --color-border: #ccc;
+  --color-border-subtle: #e6e6e6;
+  --color-surface: #f8f8f8;
+  --color-surface-hover: #ececec;
+  --color-link-hover: #00f;
+  --color-decor: currentColor;
+}
 
-$color-bg: $bone;
-$color-surface-lighter: $pvc;
-$color-surface-light: $egg;
-$color-surface-dark: $silver;
-$color-text: $jet;
-$color-subtext: $ash;
+:root[data-theme="dark"] {
+  --color-bg: #161616;
+  --color-bg-rgb: 22, 22, 22;
+  --color-text: #f1f1f1;
+  --color-text-secondary: #ccc;
+  --color-text-muted: #999;
+  --color-border: #6c6c6c;
+  --color-border-subtle: #333;
+  --color-surface: #212121;
+  --color-surface-hover: #181818;
+  --color-decor: currentColor;
+  --color-link-hover: #6699ff;
+}

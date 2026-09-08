@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block content %}
+<article>
+  {{<page_header page />}}
+  <div class="markdown-body">
+    {{ page.content | safe }}
+    {% set total_links = page.extra.links | length %}
+    {% set link_offset = get_random(start=0, end=total_links) %}
+    <ul>
+      {% for i in range(end=total_links) %}
+      {% set link = page.extra.links[(i + link_offset) % total_links] %}
+      <li><a href="{{ link.url }}" target="_blank" rel="noopener noreferrer">{{<link_label link />}}</a>{% if link.description %} — {{ link.description }}{% endif %}</li>
+      {% endfor %}
+    </ul>
+
+    <h2 id="buttons">Buttons</h2>
+    <div class="button-grid">
+      {% for button in page.extra.buttons %}
+      {{<button_tile button />}}
+      {% endfor %}
+    </div>
+  </div>
+</article>
+{% endblock content %}

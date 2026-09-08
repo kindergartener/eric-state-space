@@ -1,0 +1,1 @@
+@media (prefers-reduced-motion: no-preference){.button-tile>:hover{transform-origin:center;transform:scale(200%);box-shadow:0px 0px 8px 2px #444}.button-marquee:has(.button-tile:hover){overflow:visible;z-index:10}}

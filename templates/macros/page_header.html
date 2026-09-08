@@ -1,0 +1,25 @@
+{% component page_header(page) %}
+<header class="page-header">
+  <h1 class="page-title">{{ page.title }}</h1>
+  <div class="page-metadata">
+    {% if page.taxonomies.tags %}
+    <ul class="page-tags">
+      {% for tag in page.taxonomies.tags | sort %}
+      <li><a href="{{ get_taxonomy_url(kind="tags", term=tag) }}">{{ tag }}</a></li>
+      {% endfor %}
+    </ul>
+    {% endif %}
+    {% if page.description %}
+    <p class="page-description">{{ page.description }}</p>
+    {% endif %}
+    <p class="page-metadata-fields">
+      {% if page.date %}
+      <span class="page-date-range">{{ page.date | date(format="%Y-%m-%d") }}{% if page.updated %} – {{ page.updated | date(format="%Y-%m-%d") }}{% endif %}</span>
+      {% endif %}
+      {% if page.reading_time and not page.extra.hide_reading_time %}
+      <span class="page-reading-time">{{ page.reading_time }} min</span>
+      {% endif %}
+    </p>
+  </div>
+</header>
+{% endcomponent page_header %}

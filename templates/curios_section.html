@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+
+{% block content %}
+{% if section.description %}{% set section_description = section.description %}{% else %}{% set section_description = "" %}{% endif %}
+{{<section_header title={section.title} description={section_description} />}}
+<div class="curios-page-grid">
+  {% for curio in section.pages %}
+  {{<curio_tile curio />}}
+  {% endfor %}
+</div>
+{% endblock content %}

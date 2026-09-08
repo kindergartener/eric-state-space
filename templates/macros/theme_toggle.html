@@ -1,0 +1,14 @@
+{% component theme_toggle() %}
+<div id="toggle-group">
+  <button id="popup-toggle" class="toggle-button" type="button" aria-label="Toggle link popups" title="Link popups: on" hidden>
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <use id="popup-toggle-icon" href="#popup-icon-on"></use>
+    </svg>
+  </button>
+  <button id="theme-toggle" class="toggle-button" type="button" aria-label="Toggle color theme" title="Theme: light">
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <use id="theme-toggle-icon" href="#theme-icon-light"></use>
+    </svg>
+  </button>
+</div>
+{% endcomponent theme_toggle %}

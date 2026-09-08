@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- ⣿⣷⠈⣿⣿⣿⣿⣷⣦⡉⠛⣉⣤⣶⣿⣿⣿⣿⣿⣿⣿⣿⣿⣷⣶⣶⣦⣤⣉⠙⠻⣿⣿⣿⣿⣿⡿⣝⠶⣤⡉⠻⣿⣿⣷⣦⡀⢿⣿⣿⣿⣿⡇⢸⣿⣿⣿⣿⣿⣿⣿⣿⡹⡀⢻ -->
+<!-- ⣿⣿⣆⡙⣛⣉⣉⠁⢀⣠⢜⣥⣾⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣶⣄⡙⠻⣿⣿⣿⣶⣝⣼⣿⣷⣌⠙⢿⣿⣇⠘⠻⠿⣿⣿⣧⣌⡁⠠⣌⡙⠻⣿⣿⣿⣿⣿⡈ -->
+<!-- ⣿⣿⣿⣿⣿⠟⢁⣴⢟⣵⠟⠋⣹⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣧⣕⢭⡻⣶⣌⠹⢿⣿⣿⣿⣿⣿⣿⣷⣄⠁⢬⣥⣤⣤⠀⣼⣿⣿⣿⡆⢸⣿⣦⡈⢻⣿⣿⣿⣧ -->
+<!-- ⣿⣿⣿⡿⠋⣰⢟⣵⣿⠃⣰⣿⣿⣿⣿⣿⣿⣿⠛⢻⣿⣿⣿⣿⡌⠻⣿⣿⣿⣿⣿⣷⣾⣿⣿⣷⣿⣿⣿⣿⣿⣿⣿⣿⣿⣷⣄⠹⣿⣿⡄⠻⣿⣿⣿⣇⠘⠙⡛⢷⣄⠙⣿⣿⣿ -->
+<!-- ⣿⣿⡟⢁⡾⣣⣿⣿⠁⣠⣿⣿⣿⣿⣿⣿⣿⡇⢰⣄⠹⣿⣿⣿⣿⣆⠈⠻⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣧⡈⢿⣿⣦⣤⡀⠙⢟⡩⠀⢿⣷⣝⢆⠘⣿⣿ -->
+<!-- ⣿⡟⢠⡟⣴⣿⣿⡏⣸⣿⣿⣿⣿⣿⣿⣿⣿⡇⣼⣿⣦⡈⠻⣿⣿⠟⢃⠀⠀⠠⣤⣹⣿⠙⢿⣿⣿⣿⣿⣄⠙⢿⣿⣿⣿⣿⣿⣿⣿⣄⠙⣿⣿⠇⠐⠻⣷⡦⠈⢿⣿⣶⣴⣿⣿ -->
+<!-- ⡟⢀⣿⣿⢏⣿⣿⣿⣿⣿⣿⣿⣿⠃⢰⣿⣿⠀⣿⣿⣿⣿⣦⡙⠧⣴⣿⣷⡈⢦⣌⠙⠿⣷⡀⠙⠻⣿⣿⣿⣧⡈⢻⣿⣿⣿⣿⣿⣿⣿⣦⠘⠏⢰⡇⣦⠈⠁⣼⡜⣿⣿⣿⣿⣿ -->
+<!-- ⢁⣾⣿⠏⣾⠛⣿⣿⣿⣿⣿⣿⡏⠀⢸⣿⣿⠀⣿⣿⣿⣿⣿⣿⣦⡈⠻⣿⣷⡌⢻⣷⣦⣌⡙⠂⠀⠤⠉⠛⠻⠷⠄⠻⣿⣿⣿⣿⣿⣿⣿⣷⡀⠿⢀⣿⡆⠀⢹⣷⢹⣿⣿⣿⣿ -->
+<!-- ⣸⣿⣿⣼⠇⢸⣿⣿⣿⣿⣿⣿⠇⠄⢈⣩⣿⠀⣿⣿⣿⣿⣿⣿⣿⣿⣶⣤⡙⠛⠄⠋⠀⠋⠁⠀⣀⣠⣤⣤⣤⣤⣄⣀⠀⠙⢿⣿⣿⣿⣿⣿⣷⡀⠼⠿⣷⢠⠸⣿⣇⣿⣿⣿⣿ -->
+<!-- ⣿⣿⣧⣿⠀⣿⣿⣿⣿⣿⣿⡿⠀⠄⠈⣿⣿⠀⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣁⠄⠀⢀⡴⠒⣉⣡⣄⠀⠈⠉⠙⢿⣿⣆⠰⣿⣿⣿⣿⣿⣿⣿⣧⠀⣦⡈⠸⡄⢿⣿⢸⣿⣿⣿ -->
+<!-- ⣿⣿⣿⣿⢰⣿⣿⣿⣿⣿⡟⠀⠈⣼⡆⢻⣿⠀⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣇⣀⣴⠋⣠⣾⣿⡿⠋⠀⠀⠀⠀⠀⢻⣿⡆⢹⣿⣿⣿⣿⣿⣿⣿⣇⠀⠹⡀⠁⢸⣿⡇⣿⣿⣿ -->
+<!-- ⣿⣿⣿⣿⢸⣿⣿⣿⣿⣿⣤⡄⢠⣿⣿⡄⢻⡆⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡏⠀⠙⠛⠉⠀⠀⠀⠀⠀⠀⠀⠀⣿⣿⡄⢻⣿⣿⣿⣿⣿⣿⣿⡄⢃⡇⢀⢸⣿⣿⢹⣿⣿ -->
+<!-- ⣿⣿⣿⣿⢸⣿⣿⣿⣿⣿⣿⡇⣸⣿⡿⠛⢀⠀⠘⢿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡇⠀⠀⠀⠀⢀⣠⣤⣴⣶⡶⠀⣸⣿⣿⣧⠸⣿⡏⢹⣿⣿⣿⣿⣷⠈⠁⣼⠈⣿⣿⡎⣿⣿ -->
+<!-- ⣿⣿⣿⣿⠈⣿⣿⣿⣿⡟⢻⠁⣿⡿⠀⠀⠀⠠⠒⠛⠛⠿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡀⠀⢀⣴⣿⡿⣛⠉⢀⣠⣾⠿⣿⠿⣿⡄⣿⠃⣼⣿⣿⣿⣿⣿⡀⣰⣿⡇⢹⣿⣷⢻⣿ -->
+<!-- ⣿⣿⣿⣿⡀⢻⣿⣿⣿⡇⢹⠀⠋⢀⡠⢀⣤⣶⣿⠆⠀⠀⠈⠻⣿⣿⣿⣿⣿⣿⣿⣿⣿⣶⣤⣤⣤⣴⣾⣿⣿⣿⣿⠀⣿⡀⣿⡇⠈⠀⣿⣿⣿⣿⣿⣿⡇⢸⣿⡇⠘⣿⣿⡜⣿ -->
+<!-- ⡟⢻⣿⣿⣧⠘⣿⣿⣿⡇⠈⠀⣠⡏⢠⣿⡿⠟⠁⠀⠀⠀⠀⠀⢻⣿⣿⣿⣿⣿⣿⣿⣿⠟⢛⣿⣿⣿⣿⣿⣿⣿⣿⣦⣿⣿⣿⣧⣴⡀⣿⣿⣿⣿⣿⣿⣿⠸⣿⣿⠀⣿⣿⣿⣿ -->
+<!-- ⡇⠈⡿⣿⣿⣆⠹⣿⣿⠇⠀⣠⣿⡇⠀⠉⠀⠀⠀⠀⠀⣀⡀⢀⣾⣿⣿⡿⠟⠛⢛⣉⡁⢰⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠇⢘⣿⣿⣿⣿⣿⣿⠀⣿⣿⡇⢹⣿⣿⣿ -->
+<!-- ⡇⢆⠱⢻⣿⣿⡆⠹⡿⠀⢀⠹⣿⡇⠀⠀⠀⠀⣠⣴⡿⠛⢁⣼⣿⣿⠟⣠⠸⣿⣿⣿⣿⣄⠹⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡿⠋⣤⠘⣿⣿⡟⠛⣿⣿⢰⣿⣿⣿⠀⣿⣿⣿ -->
+<!-- ⡇⢸⣄⠣⢻⣿⣿⣆⠙⢶⠸⣆⠘⣿⣄⠀⠀⠸⠟⠉⣶⣴⣿⣏⣉⠀⣾⣿⡄⢻⣿⣿⣿⣿⣷⣄⡙⠻⢿⣿⣿⣿⣿⣿⣿⡿⠋⣠⣾⣿⠀⣿⣿⠇⠀⣿⠇⣸⣿⣿⣿⡆⢹⣿⣿ -->
+<!-- ⠀⠈⣿⣦⠐⢧⠸⣿⡇⣄⣀⣿⣧⡈⢻⣿⣶⣶⣾⣿⣿⣿⣿⣿⡟⢠⣿⣿⣷⡈⢻⣿⣿⣿⣿⣿⣿⣷⣦⠙⢿⣿⣿⠟⢋⣤⣤⢠⣬⣍⠀⣿⡟⠀⠃⠻⠀⣿⣿⣿⣿⣿⠀⢿⣿ -->
+<!-- ⣆⠀⠹⣿⣷⣤⡀⢻⣷⢿⣿⣿⣿⡇⢸⣿⣿⡇⢹⣏⢸⣿⣿⣿⣧⠈⣿⣿⣿⣿⣿⣿⣿⡟⣫⣶⣿⣷⣦⠳⠘⢋⣠⡄⣿⣿⢧⣿⣿⣿⠀⠟⢠⣾⡇⢀⣶⣤⣤⣉⣠⣈⠃⠘⠿ -->
+<!-- ⣿⣷⣾⣿⣿⣿⣇⠘⣿⡜⣿⣿⣿⣷⠘⣿⣿⣧⣸⣿⣾⣿⣿⣿⣿⡀⣿⣿⡿⢟⣭⣭⣭⣼⣿⣿⣿⣿⣿⡷⢀⣿⣿⠃⡿⢫⣾⣿⣿⣿⣤⣴⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣶⣶ -->
+<!-- ⣿⣿⣿⣿⣿⣿⣿⡆⢹⣷⢹⣿⣿⣿⣧⡈⢿⣿⣿⣿⣿⣿⣿⣿⣿⣧⠘⣿⢱⣿⣿⣿⣿⣿⣿⣿⣿⣿⠟⢀⣾⣿⡿⠀⣴⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿ -->
+<!-- ⣿⣿⣿⣿⣿⣿⣿⡿⠀⢿⣇⢿⣿⣿⣿⣿⣦⡌⠙⠛⠿⠿⠿⠿⠿⠟⠃⡈⠻⢿⣿⣿⣿⣿⡿⠿⠛⠁⡀⠻⠟⢋⣁⣠⡤⠤⠤⠄⢈⡉⢻⣿⣿⣿⣿⠉⣿⣿⣿⣿⣿⣿⣿⣿⣿ -->
+<!-- ⣿⣿⣿⣿⣿⣿⡟⠀⣦⡀⢻⡀⢿⣿⠿⠿⣿⣿⡄⢻⣿⣶⣶⣶⣿⠋⣰⣿⣷⣤⣤⣭⠉⢤⣤⡆⠐⢀⣠⠀⢠⣤⣤⣤⣤⣶⣶⣾⣿⡇⢸⣿⣿⣿⣿⣀⣿⣿⣿⣿⣿⣿⣿⣿⣿ -->
+<!-- ⣿⣿⣿⣿⣿⣿⡇⠀⣿⣿⣄⠁⠈⠁⣴⡄⢹⣿⣷⡄⠻⣿⣿⣿⠇⣰⣿⣿⣿⣿⣿⣿⡿⠂⣀⠀⠠⠀⠡⠶⠠⢄⣠⣈⣿⣿⣿⣿⣿⡁⣼⣿⣿⣿⣿⣿⡈⠻⣿⣿⣿⣿⣿⣿⣿ -->
+<!-- ⣿⣿⣿⡃⢤⣌⠙⠀⣿⣿⣿⣷⣤⣾⣿⣷⠈⠻⣿⣿⣦⠙⠿⠋⢰⣿⣿⣿⣿⣿⣿⠋⣠⠞⢁⣴⡆⢀⡆⠀⣦⠈⠙⠿⣿⣿⣿⣿⣿⡇⢸⣿⣿⣿⣿⣿⣿⣦⡈⠛⠿⣿⣿⣿⣿ -->
+<!-- ⣿⣿⣿⣧⠘⣿⣷⣶⣿⣿⡿⣋⣵⣶⣌⣿⠀⣀⠀⢉⣛⠓⠀⢸⣿⣿⣿⣄⠙⣿⠇⠀⣁⣴⣿⣿⣿⣿⠇⡀⢹⣧⠈⢀⣤⣌⣉⡛⠛⠀⢿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣶⡄⣉⠛⢿ -->
+<!-- ⣿⣿⣿⣿⡆⠸⣿⣿⣿⢋⣼⣿⣿⣿⣿⣿⠀⢹⣷⡎⢻⣿⣶⣦⣌⠙⢿⣿⡇⢸⣆⡙⠿⣿⣿⣿⣿⣿⠀⣴⡄⢻⣧⡈⢿⣿⣿⣿⣿⣷⣦⠙⣿⣿⣿⣿⣿⣿⣿⣿⣿⡇⣿⠀⠠ -->
+<!-- ⣿⣿⠛⢋⣠⣴⣿⣿⢣⣿⣿⣿⣿⡿⢣⠃⠀⣸⣿⣷⠘⣿⣿⣿⣿⣷⡀⢻⡇⢸⣿⣿⣶⣄⠙⠻⣿⠃⣰⣿⣷⡈⢿⣷⡄⠻⣿⣿⡿⠋⣠⣼⣿⣿⣿⣿⣿⣿⣿⣿⣿⠁⣿⡆⢠ -->
+<!-- ⣿⣧⡐⠻⠟⠛⠿⣿⣎⣻⣿⣛⣵⣾⣿⠟⢠⣿⣿⡟⢠⣿⣿⣿⣿⣿⣿⣿⣇⢸⣿⣿⣿⣿⣿⡆⢠⣴⣿⣿⣿⣇⠸⣿⡀⢢⣈⣡⣴⡄⠻⣿⣿⣿⣿⣿⣿⣿⣿⣿⡟⢠⣿⠀⣼ -->
+<!-- ⣿⣿⣿⣿⣿⣿⣦⣤⡙⠛⠛⠛⢻⠿⠋⣤⣿⣿⣿⣀⣾⣿⣿⣿⣿⣿⣿⣿⣿⠘⣿⣿⣿⣿⣿⣿⡈⠛⠛⠛⠉⢩⣴⣿⣿⣄⠙⢿⣿⣿⣦⠘⢿⣿⣿⣿⣿⣿⣿⡟⢀⣿⠃⠀⠙ -->
+<!-- ⠿⠿⠿⠿⠿⠿⠿⠿⠿⠧⠘⠦⠤⠴⠿⠿⠿⠟⠁⠿⠿⠿⠿⠿⠿⠿⠿⠟⠀⠀⠻⠿⠿⠿⠿⠿⠿⠿⠿⠿⠧⠈⠿⠿⠿⠿⠇⠸⠏⠵⠟⠁⠀⠹⠿⠿⠿⠿⠏⠠⠿⠏⠠⠄⠇ -->
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Just a moment...</title>
+  <style>
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #ffffff;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      color: #313638;
+    }
+
+    .wrap {
+      text-align: center;
+    }
+
+    .spinner {
+      display: flex;
+      justify-content: center;
+      gap: 7px;
+      margin-bottom: 22px;
+    }
+
+    .dot {
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: #ff8825;
+      animation: bounce 1.4s infinite cubic-bezier(0.45, 0, 0.55, 1) both;
+    }
+
+    .dot:nth-child(1) {
+      animation-delay: -0.28s;
+    }
+
+    .dot:nth-child(2) {
+      animation-delay: -0.14s;
+    }
+
+    .dot:nth-child(3) {
+      animation-delay: 0s;
+    }
+
+    @keyframes bounce {
+      0% {
+        transform: scale(0.6);
+        opacity: 0.35;
+      }
+
+      12% {
+        transform: scale(0.7);
+        opacity: 0.45;
+      }
+
+      24% {
+        transform: scale(0.85);
+        opacity: 0.65;
+      }
+
+      36% {
+        transform: scale(1);
+        opacity: 1;
+      }
+
+      48% {
+        transform: scale(0.9);
+        opacity: 0.8;
+      }
+
+      60% {
+        transform: scale(0.75);
+        opacity: 0.55;
+      }
+
+      72% {
+        transform: scale(0.65);
+        opacity: 0.4;
+      }
+
+      86% {
+        transform: scale(0.6);
+        opacity: 0.35;
+      }
+
+      100% {
+        transform: scale(0.6);
+        opacity: 0.35;
+      }
+    }
+
+    h1 {
+      font-size: 22px;
+      font-weight: 700;
+      margin: 0;
+      margin-bottom: 20px;
+    }
+
+    h2 {
+      font-size: 14px;
+      font-weight: 500;
+      margin: 0;
+      margin-top: 10px;
+    }
+
+    .footer {
+      margin-top: 40px;
+      font-size: 12px;
+      color: #9a9fa3;
+    }
+
+    .rayid {
+      font-family: "SFMono-Regular", Consolas, Menlo, monospace;
+      font-size: 11px;
+      color: #b8bcbf;
+      margin-top: 3px;
+    }
+
+    @media (max-width: 600px) {
+      .wrap {
+        padding: 0 24px;
+      }
+
+      .dot {
+        width: 22px;
+        height: 22px;
+      }
+
+      .spinner {
+        gap: 10px;
+        margin-bottom: 30px;
+      }
+
+      h1 {
+        font-size: 30px;
+        margin-bottom: 26px;
+      }
+
+      h2 {
+        font-size: 19px;
+        margin-top: 14px;
+      }
+
+      .footer {
+        margin-top: 50px;
+        font-size: 16px;
+      }
+
+      .rayid {
+        font-size: 14px;
+        margin-top: 6px;
+      }
+    }
+  </style>
+  
+  <!-- <script data-goatcounter="https://onigirienthusiast.goatcounter.com/count" async src="/count.js"></script> -->
+
+</head>
+
+<body>
+
+  <div class="wrap">
+    <div class="spinner">
+      <div class="dot"></div>
+      <div class="dot"></div>
+      <div class="dot"></div>
+    </div>
+
+    
+
+    <h1>Checking your browser before accessing ericstate.space</h1>
+
+    <h2>This process is automatic. Your browser will redirect to your requested content shortly.</h2>
+    <h2>Please allow up to 5 seconds...</h2>
+
+    <div class="footer">
+      DDOS protection by Cloudfare
+      <div class="rayid" id="rayid"></div>
+    </div>
+  </div>
+
+  <script>
+    function fake_ray_id() {
+      const chars = "0123456789abcdef";
+      let id = "";
+      for (let i = 0; i < 16; i++) id += chars[Math.floor(Math.random() * chars.length)];
+      return id + "-" + ["MIA", "ATL", "EWR", "LAX", "SFO", "LHR", "FRA"][Math.floor(Math.random() * 7)];
+    }
+    document.getElementById("rayid").textContent = "Ray ID: " + fake_ray_id();
+  </script>
+
+</body>
+
+</html>

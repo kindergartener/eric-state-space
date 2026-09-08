@@ -1,0 +1,228 @@
+/*
+  ui-components.css
+  Component styles for #controls (parameter menu) and #audio-patch-modal
+  (audio patch HUD). Requires ui-tokens.css to be loaded first.
+
+  INTEGRATION NOTE FOR THE CODING AGENT:
+  These rules target the class names described below. Your existing markup
+  may already use different class names for the same structural roles —
+  in that case, either (a) add these classes alongside the existing ones,
+  or (b) rename the selectors here to match. The mapping table in
+  DESIGN_SPEC.md lists each selector's structural role so you can do either
+  safely. Do not change #controls / #audio-patch-modal themselves; every
+  other class below is new/suggested.
+*/
+
+*{ box-sizing: border-box; }
+
+body{
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-mono);
+  font-size: var(--fs-body);
+}
+
+/* ---------- reusable bevel utilities ---------- */
+
+/* Recessed: inputs, screens, node cards, mini fields */
+.lf-sunk{
+  border-top:    1px solid var(--bevel-dark);
+  border-left:   1px solid var(--bevel-dark);
+  border-right:  1px solid var(--bevel-light);
+  border-bottom: 1px solid var(--bevel-light);
+}
+
+/* Proud: outer panels, buttons at rest */
+.lf-raise{
+  border-top:    1px solid var(--bevel-light);
+  border-left:   1px solid var(--bevel-light);
+  border-right:  1px solid var(--bevel-dark);
+  border-bottom: 1px solid var(--bevel-dark);
+}
+
+/* Pressed: apply on :active, or toggle programmatically for a "down" state */
+.lf-pressed{
+  border-top:    1px solid var(--bevel-dark);
+  border-left:   1px solid var(--bevel-dark);
+  border-right:  1px solid var(--bevel-light);
+  border-bottom: 1px solid var(--bevel-light);
+}
+
+/* Horizontal groove divider — dark top edge, light bottom edge.
+   Apply to any row that needs to read as "cut into" the panel
+   (field rows, section heads, connection rows). */
+.lf-groove{
+  border-top:    1px solid var(--bevel-dark);
+  border-bottom: 1px solid var(--bevel-light);
+}
+
+/* Prism fringe on focus — apply on :focus-visible for every interactive
+   control so keyboard focus reads clearly against the monochrome UI. */
+.lf-sunk:focus-visible,
+.lf-raise:focus-visible,
+input:focus-visible,
+select:focus-visible,
+button:focus-visible{
+  outline: none;
+  box-shadow: -1px 0 4px var(--ca-r), 1px 0 4px var(--ca-c);
+}
+
+@media (prefers-reduced-motion: reduce){
+  * { animation: none !important; transition: none !important; }
+}
+
+/* ============================================================
+   #controls — parameter menu
+   ============================================================ */
+
+#controls{
+  width: 300px;
+  background: var(--panel);
+  padding: var(--space-4);
+}
+#controls.lf-raise{ box-shadow: 0 0 0 1px #000, 0 8px 24px rgba(0,0,0,.6); }
+
+#controls .lf-modhead{
+  display: flex; justify-content: space-between; align-items: center;
+  padding-bottom: var(--space-2); margin-bottom: var(--space-3);
+  color: var(--text); font-weight: 600; letter-spacing: .03em;
+}
+
+/* one row per parameter: label/idx/value line + the control itself */
+#controls .lf-field{ padding: var(--space-2) 2px; }
+#controls .lf-field .lf-fname{
+  display: flex; justify-content: space-between;
+  color: var(--text-dim); font-size: var(--fs-label); letter-spacing: .05em;
+}
+#controls .lf-field .lf-idx{ color: var(--text-dim); }
+#controls .lf-field .lf-fval{ color: var(--value); font-size: var(--fs-body); }
+
+#controls .lf-grid2{
+  display: grid; grid-template-columns: 1fr 1fr; gap: 0 10px;
+}
+
+/* range slider replacement bar (if using a custom slider, not <input type=range>) */
+#controls .lf-bar{
+  height: 6px; background: #000; margin-top: 4px; position: relative; overflow: hidden;
+}
+#controls .lf-bar-fill{
+  position: absolute; inset: 0; background: linear-gradient(90deg, #3a3a3a, #e9e9e6);
+}
+#controls .lf-bar-fill::after{
+  content: ""; position: absolute; top: 0; right: -1px; bottom: 0; width: 3px;
+  box-shadow: -2px 0 3px var(--ca-r), 2px 0 3px var(--ca-c);
+}
+/* if using a native <input type="range">, style the track/thumb instead: */
+#controls input[type="range"]{
+  -webkit-appearance: none; width: 100%; height: 4px; background: #000;
+  border-top: 1px solid var(--bevel-dark); border-bottom: 1px solid var(--bevel-light);
+}
+#controls input[type="range"]::-webkit-slider-thumb{
+  -webkit-appearance: none; width: 10px; height: 14px; background: #e9e9e6;
+  border: 1px solid #000; margin-top: -5px;
+}
+#controls input[type="range"]:focus-visible::-webkit-slider-thumb{
+  box-shadow: -2px 0 4px var(--ca-r), 2px 0 4px var(--ca-c);
+}
+
+#controls select,
+#controls input[type="text"],
+#controls input[type="number"]{
+  width: 100%; background: var(--surface-3); color: var(--text);
+  font-family: inherit; font-size: 11px; padding: 3px 4px;
+}
+
+/* mu/sigma landscape canvas — see DESIGN_SPEC.md for the render recipe */
+#controls .lf-heat{
+  width: 100%; height: 120px; position: relative; overflow: hidden; background: #000;
+}
+#controls .lf-heat canvas{ position: absolute; inset: 0; width: 100%; height: 100%; }
+#controls .lf-heat .lf-dot{
+  position: absolute; width: 7px; height: 7px; margin: -3.5px; border-radius: 50%;
+  background: #fff; pointer-events: none;
+  box-shadow: -2px 0 4px var(--ca-r), 2px 0 4px var(--ca-c), 0 -2px 4px var(--ca-g);
+}
+#controls .lf-heat .lf-readout{
+  position: absolute; bottom: 3px; left: 5px; font-size: var(--fs-label);
+  color: #ddd; background: rgba(0,0,0,.5); padding: 1px 3px;
+}
+
+#controls .lf-check{ display: flex; align-items: center; gap: 6px; padding: var(--space-2) 2px; }
+#controls .lf-check input{ accent-color: #e9e9e6; }
+/* apply when the row's underlying state is "on" (dither enabled, audio-reactive enabled) */
+#controls .lf-check.is-active span{
+  color: var(--text); text-shadow: -1px 0 var(--ca-r), 1px 0 var(--ca-c);
+}
+
+#controls button{
+  width: 100%; background: #161616; color: var(--text);
+  font-family: inherit; padding: 6px; letter-spacing: .05em; cursor: pointer;
+}
+#controls button:hover{ box-shadow: -1px 0 4px var(--ca-r), 1px 0 4px var(--ca-c); }
+
+#controls .lf-presetrow{ display: flex; gap: 4px; margin-top: 4px; }
+#controls .lf-presetrow button{ flex: 1; font-size: 10px; padding: 4px; }
+
+/* ============================================================
+   #audio-patch-modal — audio patch HUD
+   ============================================================ */
+
+#audio-patch-modal{
+  width: 640px; background: var(--panel); padding: var(--space-5);
+}
+#audio-patch-modal.lf-raise{ box-shadow: 0 0 0 1px #000, 0 8px 24px rgba(0,0,0,.6); }
+
+#audio-patch-modal .lf-head{
+  display: flex; justify-content: space-between; color: var(--text);
+  padding-bottom: var(--space-3); margin-bottom: var(--space-5);
+}
+#audio-patch-modal .lf-head .lf-close{
+  cursor: pointer; color: var(--text-dim);
+  background: none; border: none; font: inherit; padding: 0;
+}
+#audio-patch-modal .lf-head .lf-close:hover{ color: var(--ca-r); }
+
+#audio-patch-modal .lf-graph{
+  display: flex; justify-content: space-between; gap: 40px; position: relative; margin-bottom: 16px;
+}
+#audio-patch-modal .lf-col{ display: flex; flex-direction: column; gap: 10px; width: 220px; }
+
+/* source cards (Bass/Mid/Treble/Volume) and target cards (Mu/Sigma/Aberration/Radius) */
+#audio-patch-modal .lf-node{ background: var(--surface-2); padding: 8px; position: relative; }
+#audio-patch-modal .lf-node .lf-nname{ color: var(--text); font-size: 11px; letter-spacing: .04em; }
+#audio-patch-modal .lf-node .lf-nval{ float: right; color: var(--value); font-size: 10px; }
+#audio-patch-modal .lf-node .lf-nmini{ display: flex; gap: 4px; margin-top: 6px; }
+#audio-patch-modal .lf-node .lf-nmini input{
+  width: 33%; background: var(--surface-3); color: var(--text-dim); font-size: 9px; padding: 2px;
+}
+
+/* port dot — same halo treatment everywhere a jack/port appears */
+#audio-patch-modal .lf-port{
+  position: absolute; top: 50%; width: 8px; height: 8px; margin-top: -4px;
+  border-radius: 50%; background: #fff;
+  box-shadow: -2px 0 4px var(--ca-r), 2px 0 4px var(--ca-c), 0 -2px 3px var(--ca-g), 0 2px 3px var(--ca-v);
+}
+#audio-patch-modal .lf-col.lf-src .lf-port{ right: -5px; }
+#audio-patch-modal .lf-col.lf-tgt .lf-port{ left: -5px; }
+
+#audio-patch-modal svg.lf-cables{ position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+
+#audio-patch-modal .lf-conns{ padding-top: 10px; border-top: 1px solid var(--bevel-dark); }
+#audio-patch-modal .lf-connrow{
+  display: flex; justify-content: space-between; align-items: center; padding: 4px 2px; font-size: 11px;
+}
+#audio-patch-modal .lf-connrow .lf-cname{ color: var(--text); }
+#audio-patch-modal .lf-connrow .lf-arrow{ color: var(--text-dim); }
+#audio-patch-modal .lf-connrow input{
+  width: 50px; background: var(--surface-3); color: var(--value); font-size: 10px; padding: 2px;
+}
+#audio-patch-modal .lf-connrow .lf-remove{
+  background: none; border: none; color: var(--text-dim); cursor: pointer; padding: 0 4px;
+}
+#audio-patch-modal .lf-connrow .lf-remove:hover{ color: var(--ca-r); }
+
+#audio-patch-modal .lf-globals{
+  display: flex; gap: 16px; margin-top: 12px; padding-top: 10px; border-top: 1px solid var(--bevel-dark);
+}
+#audio-patch-modal .lf-globals .lf-g{ flex: 1; }
+#audio-patch-modal .lf-globals .lf-fname{ color: var(--text-dim); font-size: 10px; }

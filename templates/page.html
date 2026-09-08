@@ -1,25 +1,24 @@
-{% extends "blog-base.html" %}
+{% extends "base.html" %}
 
-{% block left %}
+{% block content %}
+{% set_global toc_heading_count = page.toc | length %}
+{% for h1 in page.toc %}
+  {% set_global toc_heading_count = toc_heading_count + (h1.children | length) %}
+{% endfor %}
+{% if toc_heading_count >= 2 %}
+  {{<toc page />}}
+  <noscript><style>#page-toc { opacity: 1; }</style></noscript>
+{% endif %}
+<article>
+  {{<page_header page />}}
+  <div class="markdown-body">
+    {{ page.content | safe }}
+  </div>
+</article>
+{% endblock content %}
 
-    {{ post_macros::toc_wiki(page=page, title="Contents") }}
-
-{% endblock left %}
-
-{% block blog_content %}
-
-  {{ post_macros::header(
-      page=page,
-      date_format="%Y-%m-%d",
-      show_date=true,
-      show_updated=true,
-      show_reading_time=true,
-      show_word_count=false,
-      show_tags=true
-  ) }}
-
-  {{ post_macros::content(
-      page=page,
-  ) }}
-
-{% endblock blog_content %}
+{% block scripts %}
+{% if toc_heading_count >= 2 %}
+<script src="{{ get_url(path='js/toc-scrollspy.js', trailing_slash=false) }}" defer></script>
+{% endif %}
+{% endblock scripts %}

@@ -1,0 +1,8 @@
+{% extends "base.html" %}
+
+{% block content %}
+{% set tags_url = get_url(path=taxonomy.slug, trailing_slash=true) %}
+{% set header_title = '<a class="tags-link" href="' ~ tags_url ~ '">Tags</a>/' ~ term.name %}
+{{<section_header title={header_title} />}}
+{{<blog_list pages={term.pages} />}}
+{% endblock content %}

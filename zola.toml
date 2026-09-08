@@ -1,0 +1,38 @@
+# The URL the site will be built for
+base_url = "https://ericstate.space"
+title = "eric state space"
+description = "Eric's digital garden: code, proofs, projects, and curios."
+
+# Whether to automatically compile all Sass files in the sass directory
+compile_sass = true
+
+# Whether to build a search index to be used later on by a JavaScript library
+build_search_index = true
+taxonomies = [{ name = "tags" }]
+
+[markdown]
+external_links_target_blank = true
+external_links_no_follow = true
+external_links_no_referrer = true
+insert_anchor_links = "heading"
+
+[markdown.highlighting]
+error_on_missing_language = true
+light_theme = "one-light"
+dark_theme = "one-dark-pro"
+style = "class"
+
+[extra]
+katex_enable = true
+katex_auto_render = true
+
+nav_items = [
+  { name = "Me", url = "/me" },
+  { name = "Site", url = "/site" },
+  { name = "Blog", url = "/blog" },
+  { name = "Tags", url = "/tags" },
+  { name = "Curios", url = "/curios" },
+]
+
+# Autoplay speed of the home-page buttons marquee, in pixels per second.
+marquee_speed = 40
