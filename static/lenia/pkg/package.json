@@ -1,0 +1,15 @@
+{
+  "name": "lenia",
+  "type": "module",
+  "version": "0.1.0",
+  "files": [
+    "lenia_rs_bg.wasm",
+    "lenia_rs.js",
+    "lenia_rs.d.ts"
+  ],
+  "main": "lenia_rs.js",
+  "types": "lenia_rs.d.ts",
+  "sideEffects": [
+    "./snippets/*"
+  ]
+}
