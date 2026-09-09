@@ -1,7 +1,7 @@
 // Below the phone breakpoint, #bento-box is a plain stacked flex column.
 // Between phone and tablet, curios and links share one grid row. At or above
-// tablet, blog spans both rows beside a separate curios row and a separate
-// links row.
+// tablet, blog spans three rows beside a curios row, a guestbook row, and a
+// links row stacked in the same column.
 
 (function () {
   "use strict";
@@ -9,6 +9,7 @@
   var bentoBox = document.getElementById("bento-box");
   var linksCell = document.getElementById("bento-links");
   var curiosCell = document.getElementById("bento-curios");
+  var guestbookCell = document.getElementById("bento-guestbook");
   var blogCell = document.getElementById("bento-blog");
   if (!linksCell || !curiosCell) return;
 
@@ -35,7 +36,8 @@
       if (isDesktop && blogCell) {
         var gap = bentoBox ? parseFloat(getComputedStyle(bentoBox).rowGap) || 0 : 0;
         var blogHeight = naturalCellHeight(blogCell, blogCell.querySelector(".blog-list"));
-        height = blogHeight - curiosCell.offsetHeight - gap;
+        var guestbookHeight = guestbookCell ? guestbookCell.offsetHeight : 0;
+        height = blogHeight - curiosCell.offsetHeight - guestbookHeight - gap * 2;
       } else {
         height = curiosCell.offsetHeight;
       }
