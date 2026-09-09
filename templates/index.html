@@ -93,7 +93,7 @@
           <input type="url" id="guestbook-url" name="url" maxlength="300" placeholder="Your site (optional)">
         </div>
         <div class="guestbook-compose">
-          <textarea id="guestbook-message" name="message" maxlength="500" placeholder="Leave a message" required></textarea>
+          <textarea id="guestbook-message" name="message" maxlength="100" placeholder="Leave a message" required></textarea>
           <div class="cf-turnstile" data-sitekey="{{ config.extra.turnstile_sitekey }}" data-appearance="interaction-only"></div>
           <button type="submit">Sign</button>
         </div>

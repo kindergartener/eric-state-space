@@ -12,10 +12,27 @@
     return div.innerHTML;
   }
 
-  function formatDate(unixSeconds) {
-    var d = new Date(unixSeconds * 1000);
-    var pad = function (n) { return n < 10 ? "0" + n : "" + n; };
-    return d.getFullYear() + "-" + pad(d.getMonth() + 1) + "-" + pad(d.getDate());
+  var TIME_UNITS = [
+    ["year", 31536000],
+    ["month", 2592000],
+    ["day", 86400],
+    ["hour", 3600],
+    ["min", 60],
+    ["sec", 1],
+  ];
+
+  function timeAgo(unixSeconds) {
+    var diff = Math.floor(Date.now() / 1000) - unixSeconds;
+    if (diff < 5) return "just now";
+    for (var i = 0; i < TIME_UNITS.length; i++) {
+      var unit = TIME_UNITS[i][0];
+      var seconds = TIME_UNITS[i][1];
+      var value = Math.floor(diff / seconds);
+      if (value >= 1) {
+        return value + " " + unit + (value === 1 ? "" : "s") + " ago";
+      }
+    }
+    return "just now";
   }
 
   function renderMessage(msg, prepend) {
@@ -25,15 +42,17 @@
     var nameHtml = msg.url
       ? '<a href="' + escapeHtml(msg.url) + '" target="_blank" rel="nofollow noopener noreferrer">' + escapeHtml(msg.name) + "</a>"
       : escapeHtml(msg.name);
+    var header = document.createElement("div");
+    header.className = "guestbook-message-header";
+    header.innerHTML = "<strong>" + nameHtml + "</strong>" +
+      '<span class="guestbook-message-date">' + escapeHtml(timeAgo(msg.created_at)) + "</span>";
+
     var body = document.createElement("div");
-    body.innerHTML = "<strong>" + nameHtml + ":</strong> " + escapeHtml(msg.message);
+    body.className = "guestbook-message-body";
+    body.textContent = msg.message;
 
-    var date = document.createElement("span");
-    date.className = "guestbook-message-date";
-    date.textContent = formatDate(msg.created_at);
-
+    li.appendChild(header);
     li.appendChild(body);
-    li.appendChild(date);
 
     if (prepend) {
       list.insertBefore(li, list.firstChild);
