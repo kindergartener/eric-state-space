@@ -233,7 +233,6 @@
       <span class="blog-post-reading-time">2 min</span>
       
     </div>
-    
   </li>
   
   <hr class="blog-post-divider">
@@ -254,13 +253,12 @@
       <span class="blog-post-reading-time">5 min</span>
       
     </div>
-    
   </li>
   
   <hr class="blog-post-divider">
   
   
-  <li class="blog-post">
+  <li class="blog-post blog-post-last">
     <div class="blog-post-row">
       <div class="blog-post-main">
         <a class="blog-post-title" href="https://ericstate.space/blog/fibonacci/">Fibonacci Numbers in Rust</a>
@@ -275,9 +273,19 @@
       <span class="blog-post-reading-time">9 min</span>
       
     </div>
-    
   </li>
   
+  
+  
+  <li class="bento-more-item">
+    <div class="bento-more-footer" hidden>
+      <a class="blog-more-label" href="/blog">More
+        <svg class="blog-more-arrow" aria-hidden="true">
+          <use href="#chevron-right-icon"></use>
+        </svg>
+      </a>
+    </div>
+  </li>
   
 </ul>
 
@@ -366,9 +374,6 @@
         
         
         
-        <li><a href="https://www.kiseido.com/" target="_blank" rel="noopener noreferrer">kiseido.com</a></li>
-        
-        
         <li><a href="https://golem.ph.utexas.edu/category/" target="_blank" rel="noopener noreferrer">golem.ph.utexas.edu/category</a></li>
         
         
@@ -396,6 +401,9 @@
         <li><a href="https://nyaa.si/" target="_blank" rel="noopener noreferrer">nyaa.si</a></li>
         
         
+        <li><a href="https://senseis.xmp.net/" target="_blank" rel="noopener noreferrer">senseis.xmp.net</a></li>
+        
+        
         <li class="bento-more-item">
           <div class="bento-more-footer">
             <a class="blog-more-label" href="/links">More
@@ -415,16 +423,15 @@
     </div>
     <div class="bento-content">
       <ul class="bento-list" id="guestbook-list"></ul>
-      <hr class="guestbook-divider">
       <form id="guestbook-form">
         <div class="guestbook-name-row">
-          <input type="text" id="guestbook-name" name="name" maxlength="60" placeholder="Name (optional)">
-          <input type="url" id="guestbook-url" name="url" maxlength="300" placeholder="Your site (optional)">
+          <input type="text" id="guestbook-name" name="name" maxlength="16" placeholder="name (opt)">
+          <input type="url" id="guestbook-url" name="url" maxlength="300" placeholder="website (opt)">
         </div>
         <div class="guestbook-compose">
-          <textarea id="guestbook-message" name="message" maxlength="100" placeholder="Leave a message" required></textarea>
+          <textarea id="guestbook-message" name="message" maxlength="100" placeholder="leave a message" required></textarea>
           <div class="cf-turnstile" data-sitekey="1x00000000000000000000AA" data-appearance="interaction-only"></div>
-          <button type="submit">Sign</button>
+          <button type="submit">sign</button>
         </div>
         <p id="guestbook-error" hidden></p>
       </form>
@@ -573,7 +580,7 @@
 
     
 <script src="https://ericstate.space/js/marquee.js" defer></script>
-<script src="https://ericstate.space/js/bento-links-fit.js" defer></script>
+<script src="https://ericstate.space/js/bento-fit.js" defer></script>
 <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
 <script src="https://ericstate.space/js/guestbook.js" defer></script>
 

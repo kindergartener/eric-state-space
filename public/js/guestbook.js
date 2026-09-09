@@ -4,6 +4,8 @@
   var form = document.getElementById("guestbook-form");
   var list = document.getElementById("guestbook-list");
   var errorEl = document.getElementById("guestbook-error");
+  var submitButton = form ? form.querySelector('button[type="submit"]') : null;
+  var isSubmitting = false;
   if (!form || !list) return;
 
   function escapeHtml(text) {
@@ -44,7 +46,7 @@
       : escapeHtml(msg.name);
     var header = document.createElement("div");
     header.className = "guestbook-message-header";
-    header.innerHTML = "<strong>" + nameHtml + "</strong>" +
+    header.innerHTML = '<span class="guestbook-message-name">' + nameHtml + "</span>" +
       '<span class="guestbook-message-date">' + escapeHtml(timeAgo(msg.created_at)) + "</span>";
 
     var body = document.createElement("div");
@@ -79,6 +81,9 @@
 
   form.addEventListener("submit", function (event) {
     event.preventDefault();
+    if (isSubmitting) return;
+    isSubmitting = true;
+    if (submitButton) submitButton.disabled = true;
     clearError();
 
     var turnstileToken = "";
@@ -111,6 +116,10 @@
       })
       .catch(function () {
         showError("Network error. Please try again.");
+      })
+      .then(function () {
+        isSubmitting = false;
+        if (submitButton) submitButton.disabled = false;
       });
   });
 })();

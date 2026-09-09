@@ -1,7 +1,7 @@
-{% component blog_list(pages, total=0, more_url="") %}
+{% component blog_list(pages, more_url="") %}
 <ul class="blog-list">
   {% for post in pages %}
-  <li class="blog-post">
+  <li class="blog-post{% if loop.last %} blog-post-last{% endif %}">
     <div class="blog-post-row">
       <div class="blog-post-main">
         <a class="blog-post-title" href="{{ post.permalink | safe }}">{{ post.title }}</a>
@@ -16,19 +16,21 @@
       <span class="blog-post-reading-time">{{ post.reading_time }} min</span>
       {% endif %}
     </div>
-    {% if loop.last and total > pages | length %}
-    <div class="blog-more">
+  </li>
+  {% if not loop.last %}
+  <hr class="blog-post-divider">
+  {% endif %}
+  {% endfor %}
+  {% if pages | length > 0 %}
+  <li class="bento-more-item">
+    <div class="bento-more-footer" hidden>
       <a class="blog-more-label" href="{{ more_url }}">More
         <svg class="blog-more-arrow" aria-hidden="true">
           <use href="#chevron-right-icon"></use>
         </svg>
       </a>
     </div>
-    {% endif %}
   </li>
-  {% if not loop.last %}
-  <hr class="blog-post-divider">
   {% endif %}
-  {% endfor %}
 </ul>
 {% endcomponent blog_list %}

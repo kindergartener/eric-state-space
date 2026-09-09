@@ -32,7 +32,7 @@ function validate(body) {
 
   if (!message) return { error: "Message is required." };
   if (message.length > 100) return { error: "Message must be 100 characters or fewer." };
-  if (name.length > 60) return { error: "Name must be 60 characters or fewer." };
+  if (name.length > 16) return { error: "Name must be 16 characters or fewer." };
   if (url && !/^https?:\/\//.test(url)) return { error: "Link must start with http:// or https://." };
   if (url.length > 300) return { error: "Link must be 300 characters or fewer." };
 
