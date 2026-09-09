@@ -965,6 +965,7 @@ header {
   #bento-guestbook {
     grid-column: 2;
     grid-row: 2;
+    min-width: 0;
     align-self: start;
   }
 
