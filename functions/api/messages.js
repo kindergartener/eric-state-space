@@ -18,7 +18,7 @@ async function verifyTurnstile(token, secret) {
   return result.success === true;
 }
 
-const BLOCKLIST = ["viagra", "cialis", "casino", "xxx porn", "crypto airdrop"];
+const BLOCKLIST = ["erik", "erick"];
 
 function containsBlockedTerm(message) {
   const lower = message.toLowerCase();
