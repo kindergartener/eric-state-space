@@ -757,10 +757,27 @@ header {
   gap: $space-sm;
 }
 
+.guestbook-divider {
+  width: calc(100% + 1.5rem);
+  margin: 0 -0.75rem;
+  border: none;
+  border-top: 1px dotted var(--color-decor);
+}
+
 #guestbook-form {
   display: flex;
   flex-direction: column;
   gap: $space-sm;
+}
+
+.guestbook-name-row {
+  display: flex;
+  gap: $space-sm;
+}
+
+.guestbook-name-row input {
+  flex: 1 1 50%;
+  min-width: 0;
 }
 
 #guestbook-form input,
@@ -799,9 +816,19 @@ header {
   font-size: 0.85em;
 }
 
-#guestbook-list {
-  border-top: 1px dotted var(--color-decor);
-  padding-top: $space-sm;
+.guestbook-message {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: $space-md;
+}
+
+.guestbook-message-date {
+  flex: 0 0 auto;
+  font-family: monospace;
+  font-size: 0.8em;
+  color: var(--color-text-muted);
+  white-space: nowrap;
 }
 
 .blog-post-title {

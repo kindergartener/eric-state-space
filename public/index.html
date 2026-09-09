@@ -366,6 +366,12 @@
         
         
         
+        <li><a href="https://gwern.net/" target="_blank" rel="noopener noreferrer">gwern.net</a></li>
+        
+        
+        <li><a href="https://www.cube20.org/" target="_blank" rel="noopener noreferrer">cube20.org</a></li>
+        
+        
         <li><a href="https://rodarmor.com/" target="_blank" rel="noopener noreferrer">rodarmor.com</a></li>
         
         
@@ -390,12 +396,6 @@
         <li><a href="https://golem.ph.utexas.edu/category/" target="_blank" rel="noopener noreferrer">golem.ph.utexas.edu/category</a></li>
         
         
-        <li><a href="https://johncarlosbaez.wordpress.com/" target="_blank" rel="noopener noreferrer">johncarlosbaez.wordpress.com</a></li>
-        
-        
-        <li><a href="https://www.oldbookillustrations.com/" target="_blank" rel="noopener noreferrer">oldbookillustrations.com</a></li>
-        
-        
         <li class="bento-more-item">
           <div class="bento-more-footer">
             <a class="blog-more-label" href="/links">More
@@ -414,15 +414,18 @@
       <span class="bento-title">Guestbook</span>
     </div>
     <div class="bento-content">
+      <ul class="bento-list" id="guestbook-list"></ul>
+      <hr class="guestbook-divider">
       <form id="guestbook-form">
-        <input type="text" id="guestbook-name" name="name" maxlength="60" placeholder="Name (optional)">
-        <input type="url" id="guestbook-url" name="url" maxlength="300" placeholder="Your site (optional)">
+        <div class="guestbook-name-row">
+          <input type="text" id="guestbook-name" name="name" maxlength="60" placeholder="Name (optional)">
+          <input type="url" id="guestbook-url" name="url" maxlength="300" placeholder="Your site (optional)">
+        </div>
         <textarea id="guestbook-message" name="message" maxlength="500" placeholder="Leave a message" required></textarea>
-        <div class="cf-turnstile" data-sitekey="1x00000000000000000000AA"></div>
+        <div class="cf-turnstile" data-sitekey="1x00000000000000000000AA" data-appearance="interaction-only"></div>
         <button type="submit">Sign</button>
         <p id="guestbook-error" hidden></p>
       </form>
-      <ul class="bento-list" id="guestbook-list"></ul>
     </div>
   </div>
 </div>

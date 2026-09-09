@@ -85,15 +85,18 @@
       <span class="bento-title">Guestbook</span>
     </div>
     <div class="bento-content">
+      <ul class="bento-list" id="guestbook-list"></ul>
+      <hr class="guestbook-divider">
       <form id="guestbook-form">
-        <input type="text" id="guestbook-name" name="name" maxlength="60" placeholder="Name (optional)">
-        <input type="url" id="guestbook-url" name="url" maxlength="300" placeholder="Your site (optional)">
+        <div class="guestbook-name-row">
+          <input type="text" id="guestbook-name" name="name" maxlength="60" placeholder="Name (optional)">
+          <input type="url" id="guestbook-url" name="url" maxlength="300" placeholder="Your site (optional)">
+        </div>
         <textarea id="guestbook-message" name="message" maxlength="500" placeholder="Leave a message" required></textarea>
-        <div class="cf-turnstile" data-sitekey="{{ config.extra.turnstile_sitekey }}"></div>
+        <div class="cf-turnstile" data-sitekey="{{ config.extra.turnstile_sitekey }}" data-appearance="interaction-only"></div>
         <button type="submit">Sign</button>
         <p id="guestbook-error" hidden></p>
       </form>
-      <ul class="bento-list" id="guestbook-list"></ul>
     </div>
   </div>
 </div>

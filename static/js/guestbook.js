@@ -12,12 +12,29 @@
     return div.innerHTML;
   }
 
+  function formatDate(unixSeconds) {
+    var d = new Date(unixSeconds * 1000);
+    var pad = function (n) { return n < 10 ? "0" + n : "" + n; };
+    return d.getFullYear() + "-" + pad(d.getMonth() + 1) + "-" + pad(d.getDate());
+  }
+
   function renderMessage(msg, prepend) {
     var li = document.createElement("li");
+    li.className = "guestbook-message";
+
     var nameHtml = msg.url
       ? '<a href="' + escapeHtml(msg.url) + '" target="_blank" rel="nofollow noopener noreferrer">' + escapeHtml(msg.name) + "</a>"
       : escapeHtml(msg.name);
-    li.innerHTML = "<strong>" + nameHtml + ":</strong> " + escapeHtml(msg.message);
+    var body = document.createElement("div");
+    body.innerHTML = "<strong>" + nameHtml + ":</strong> " + escapeHtml(msg.message);
+
+    var date = document.createElement("span");
+    date.className = "guestbook-message-date";
+    date.textContent = formatDate(msg.created_at);
+
+    li.appendChild(body);
+    li.appendChild(date);
+
     if (prepend) {
       list.insertBefore(li, list.firstChild);
     } else {
