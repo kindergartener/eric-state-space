@@ -765,6 +765,8 @@ header {
 
 #guestbook-form input,
 #guestbook-form textarea {
+  appearance: none;
+  -webkit-appearance: none;
   font: inherit;
   padding: 0.4rem 0.6rem;
   border: 1px solid var(--color-border);
@@ -774,7 +776,7 @@ header {
 
 #guestbook-form textarea {
   min-height: 4rem;
-  resize: vertical;
+  resize: none;
 }
 
 #guestbook-form button {
